@@ -541,6 +541,11 @@
 
         // Daten-Management
         function initializeDataListeners() {
+            if (!scheduleRef) {
+                console.error('ScheduleRef ist nicht initialisiert');
+                return;
+            }
+            
             scheduleRef.on('value', snapshot => {
                 try {
                     const data = snapshot.val() || {};
@@ -563,6 +568,11 @@
 
         // Mitarbeiter-Management
         function addEmployee() {
+            if (!scheduleRef) {
+                alert('Datenbank ist noch nicht bereit. Bitte versuchen Sie es erneut.');
+                return;
+            }
+            
             const nameInput = document.getElementById('newEmployeeName');
             const name = nameInput.value.trim();
             
@@ -587,6 +597,8 @@
         }
 
         function removeEmployee(nameToRemove) {
+            if (!scheduleRef) return;
+            
             if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen?`)) {
                 scheduleRef.child('employees').set(employees.filter(emp => emp !== nameToRemove))
                     .catch(error => {
@@ -598,6 +610,8 @@
 
         function updateEmployeeList() {
             const container = document.getElementById('employeeList');
+            if (!container) return;
+            
             container.innerHTML = employees.map(emp =>
                 `<div class="tag">
                     ${escapeHtml(emp)}
@@ -608,6 +622,11 @@
 
         // Schichttypen-Management
         function addShiftType() {
+            if (!scheduleRef) {
+                alert('Datenbank ist noch nicht bereit. Bitte versuchen Sie es erneut.');
+                return;
+            }
+            
             const nameInput = document.getElementById('newShiftTypeName');
             const name = nameInput.value.trim();
             
@@ -632,6 +651,8 @@
         }
 
         function removeShiftType(typeToRemove) {
+            if (!scheduleRef) return;
+            
             if (confirm(`Schicht-Typ "${typeToRemove}" wirklich entfernen?`)) {
                 scheduleRef.child('shiftTypes').set(shiftTypes.filter(st => st !== typeToRemove))
                     .catch(error => {
@@ -643,6 +664,8 @@
 
         function updateShiftTypeList() {
             const container = document.getElementById('shiftTypeList');
+            if (!container) return;
+            
             container.innerHTML = shiftTypes.map(st =>
                 `<div class="tag">
                     ${escapeHtml(st)}
@@ -694,7 +717,10 @@
             const startDate = formatDate(weekDates[0]);
             const endDate = formatDate(weekDates[6]);
             const weekNumber = getWeekNumber(weekDates[0]);
-            document.getElementById('currentWeek').textContent = `KW ${weekNumber} (${startDate} - ${endDate})`;
+            const currentWeekElement = document.getElementById('currentWeek');
+            if (currentWeekElement) {
+                currentWeekElement.textContent = `KW ${weekNumber} (${startDate} - ${endDate})`;
+            }
         }
 
         // Modal-Funktionen
@@ -705,18 +731,31 @@
             }
             
             currentModalSlot = { date: new Date(date), shiftType };
-            document.getElementById('shiftModal').style.display = 'flex';
-            updateModalEmployeeSelect();
+            const modal = document.getElementById('shiftModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                updateModalEmployeeSelect();
+            }
         }
 
         function closeModal() {
-            document.getElementById('shiftModal').style.display = 'none';
-            document.getElementById('modalNote').value = '';
+            const modal = document.getElementById('shiftModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            
+            const noteField = document.getElementById('modalNote');
+            if (noteField) {
+                noteField.value = '';
+            }
+            
             currentModalSlot = null;
         }
 
         function updateModalEmployeeSelect() {
             const select = document.getElementById('modalEmployee');
+            if (!select) return;
+            
             if (employees.length > 0) {
                 select.innerHTML = employees.map(emp => 
                     `<option value="${escapeHtml(emp)}">${escapeHtml(emp)}</option>`
@@ -727,10 +766,15 @@
         }
 
         function saveShift() {
-            if (!currentModalSlot) return;
+            if (!currentModalSlot || !scheduleRef) return;
             
-            const employee = document.getElementById('modalEmployee').value;
-            const note = document.getElementById('modalNote').value.trim();
+            const employeeSelect = document.getElementById('modalEmployee');
+            const noteField = document.getElementById('modalNote');
+            
+            if (!employeeSelect || !noteField) return;
+            
+            const employee = employeeSelect.value;
+            const note = noteField.value.trim();
             
             if (!employee) {
                 alert('Bitte wählen Sie einen Mitarbeiter aus.');
@@ -757,6 +801,8 @@
         }
 
         function removeShift(dateStr, shiftType, employeeToRemove) {
+            if (!scheduleRef) return;
+            
             if (!confirm(`Schicht für ${employeeToRemove} wirklich entfernen?`)) {
                 return;
             }
@@ -786,10 +832,13 @@
         // Schichtplan rendern
         function renderSchedule() {
             const grid = document.getElementById('scheduleGrid');
+            if (!grid) return;
+            
             const weekDates = getWeekDates(currentWeekOffset);
             
             let html = '<div class="grid-header shift-type-header">Schicht</div>';
             
+            // Wochentage-Header
             weekDates.forEach(date => {
                 const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
                 html += `<div class="grid-header day-header">
@@ -798,6 +847,7 @@
                 </div>`;
             });
             
+            // Schichtplan-Grid
             shiftTypes.forEach(shiftType => {
                 html += `<div class="grid-header shift-type-header">${escapeHtml(shiftType)}</div>`;
                 
@@ -831,6 +881,7 @@
 
         // Hilfsfunktionen
         function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;

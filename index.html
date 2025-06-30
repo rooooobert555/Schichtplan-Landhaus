@@ -156,83 +156,78 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    let employees = [];
+    let shifts = {};
+    let currentWeekOffset = 0;
+    let currentModalSlot = null;
+    
+    const timeSlots = ['06:00 - 14:00', '14:00 - 22:00', '22:00 - 06:00'];
+    const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 
-        let employees = [];
-        let shifts = {};
-        let currentWeekOffset = 0;
-        let currentModalSlot = null;
-        
-        const timeSlots = ['06:00 - 14:00', '14:00 - 22:00', '22:00 - 06:00'];
-        const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+    // Firebase initialisieren (NUR DIESE EINE ZEILE IST KORREKT)
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const dbRef = database.ref('/schedule');
 
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const dbRef = database.ref('/schedule');
-
-        database.ref('.info/connected').on('value', (snap) => {
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('connectionStatus');
-            if (snap.val() === true) {
-                statusDot.className = 'status-dot';
-                statusText.textContent = 'Online';
-                showNotification('Mit der Cloud-Datenbank verbunden.', 'success');
-            } else {
-                statusDot.className = 'status-dot offline';
-                statusText.textContent = 'Offline';
-                showNotification('Verbindung verloren. Änderungen werden nicht synchronisiert.', 'error');
-            }
-        });
-
-        dbRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data && data.employees) {
-                employees = data.employees;
-                shifts = data.shifts || {};
-            } else {
-                const initialData = {
-                    employees: ["Max Mustermann", "Anna Schmidt"],
-                    shifts: {}
-                };
-                dbRef.set(initialData); // Schreibe Beispieldaten, wenn die DB leer ist
-            }
-            renderAll();
-        });
-
-        function renderAll() {
-            updateWeekDisplay();
-            updateEmployeeList();
-            updateModalEmployeeSelect();
-            renderSchedule();
-            updateStatistics();
+    // Verbindung zu Firebase überwachen
+    database.ref('.info/connected').on('value', (snap) => {
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('connectionStatus');
+        if (snap.val() === true) {
+            statusDot.className = 'status-dot';
+            statusText.textContent = 'Online';
+        } else {
+            statusDot.className = 'status-dot offline';
+            statusText.textContent = 'Offline';
         }
+    });
 
-        function getWeekDates(weekOffset = 0) { const today = new Date(); const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); const monday = new Date(today); monday.setDate(today.getDate() - dayOfWeek + 1 + (weekOffset * 7)); const dates = []; for (let i = 0; i < 7; i++) { const date = new Date(monday); date.setDate(monday.getDate() + i); dates.push(date); } return dates; }
-        function getWeekNumber(date) { const firstDayOfYear = new Date(date.getFullYear(), 0, 1); const pastDaysOfYear = (date - firstDayOfYear) / 86400000; return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7); }
-        function formatDate(date) { return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }); }
-        function getShiftKey(date, timeSlot) { return `${date.toISOString().split('T')[0]}__${timeSlot.replace(/ /g, '').replace(':', '')}`; }
+    // Auf Datenänderungen aus Firebase lauschen
+    dbRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.employees) {
+            employees = data.employees;
+            shifts = data.shifts || {};
+        } else {
+            const initialData = {
+                employees: ["Max Mustermann", "Anna Schmidt"],
+                shifts: {}
+            };
+            dbRef.set(initialData);
+        }
+        renderAll();
+    });
 
-        function addEmployee() { const nameInput = document.getElementById('newEmployeeName'); const name = nameInput.value.trim(); if (name && !employees.includes(name)) { const newEmployees = [...employees, name]; database.ref('schedule/employees').set(newEmployees); nameInput.value = ''; showNotification(`${name} wurde hinzugefügt.`, 'success'); } }
-        function removeEmployee(nameToRemove) { if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen? Alle Schichten werden gelöscht.`)) { const newEmployees = employees.filter(emp => emp !== nameToRemove); const newShifts = { ...shifts }; Object.keys(newShifts).forEach(key => { newShifts[key] = newShifts[key].filter(shift => shift.employee !== nameToRemove); if (newShifts[key].length === 0) { delete newShifts[key]; } }); database.ref('schedule').update({ employees: newEmployees, shifts: newShifts }); showNotification(`${nameToRemove} wurde entfernt.`, 'success'); } }
-        function updateEmployeeList() { const container = document.getElementById('employeeList'); container.innerHTML = employees.map(emp => `<div class="employee-tag">${emp}<button class="remove-employee" onclick="removeEmployee('${emp}')">×</button></div>`).join(''); }
-        function updateModalEmployeeSelect() { const select = document.getElementById('modalEmployee'); select.innerHTML = employees.map(emp => `<option value="${emp}">${emp}</option>`).join(''); }
+    function renderAll() {
+        updateWeekDisplay();
+        updateEmployeeList();
+        updateModalEmployeeSelect();
+        renderSchedule();
+        updateStatistics();
+    }
 
-        function openShiftModal(date, timeSlot) { currentModalSlot = { date, timeSlot }; document.getElementById('shiftModal').style.display = 'block'; updateModalEmployeeSelect(); }
-        function closeModal() { document.getElementById('shiftModal').style.display = 'none'; currentModalSlot = null; }
-        function saveShift() { if (!currentModalSlot) return; const employee = document.getElementById('modalEmployee').value; const startTime = document.getElementById('modalStartTime').value; const endTime = document.getElementById('modalEndTime').value; if (!employee || !startTime || !endTime) { showNotification('Bitte alle Felder ausfüllen!', 'error'); return; } const shiftKey = getShiftKey(new Date(currentModalSlot.date), currentModalSlot.timeSlot); const newShift = { employee, startTime, endTime }; const currentShiftsInSlot = shifts[shiftKey] || []; const updatedShiftsInSlot = [...currentShiftsInSlot, newShift]; database.ref(`schedule/shifts/${shiftKey}`).set(updatedShiftsInSlot); closeModal(); showNotification(`Schicht für ${employee} gespeichert.`, 'success'); }
-        function removeShift(dateStr, timeSlot, index) { const date = new Date(dateStr); const shiftKey = getShiftKey(date, timeSlot); if (shifts[shiftKey] && shifts[shiftKey][index]) { const updatedShiftsInSlot = [...shifts[shiftKey]]; const removedShift = updatedShiftsInSlot.splice(index, 1)[0]; if (updatedShiftsInSlot.length > 0) { database.ref(`schedule/shifts/${shiftKey}`).set(updatedShiftsInSlot); } else { database.ref(`schedule/shifts/${shiftKey}`).remove(); } showNotification(`Schicht von ${removedShift.employee} entfernt.`, 'success'); } }
-        function clearAllShifts() { if (confirm('Wirklich alle Schichten dieser Woche löschen?')) { const weekDates = getWeekDates(currentWeekOffset); const updates = {}; weekDates.forEach(date => { timeSlots.forEach(timeSlot => { const shiftKey = getShiftKey(date, timeSlot); if (shifts[shiftKey]) { updates[`/schedule/shifts/${shiftKey}`] = null; } }); }); database.ref().update(updates); showNotification('Alle Schichten der Woche wurden gelöscht.', 'success'); } }
+    function getWeekDates(weekOffset = 0) { const today = new Date(); const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); const monday = new Date(today); monday.setDate(today.getDate() - dayOfWeek + 1 + (weekOffset * 7)); const dates = []; for (let i = 0; i < 7; i++) { const date = new Date(monday); date.setDate(monday.getDate() + i); dates.push(date); } return dates; }
+    function getWeekNumber(date) { const firstDayOfYear = new Date(date.getFullYear(), 0, 1); const pastDaysOfYear = (date - firstDayOfYear) / 86400000; return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7); }
+    function formatDate(date) { return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }); }
+    function getShiftKey(date, timeSlot) { return `${date.toISOString().split('T')[0]}__${timeSlot.replace(/ /g, '').replace(/:/g, '')}`; }
 
-        function changeWeek(direction) { currentWeekOffset += direction; renderAll(); }
-        function updateWeekDisplay() { const weekDates = getWeekDates(currentWeekOffset); const weekNumber = getWeekNumber(weekDates[0]); const startDate = formatDate(weekDates[0]); const endDate = formatDate(weekDates[6]); document.getElementById('currentWeek').textContent = `KW ${weekNumber} (${startDate} - ${endDate})`; }
-        function renderSchedule() { const container = document.getElementById('scheduleGrid'); const weekDates = getWeekDates(currentWeekOffset); let html = '<div class="time-slot">Uhrzeit</div>'; weekDates.forEach(date => { html += `<div class="day-header">${dayNames[date.getDay() === 0 ? 6 : date.getDay() - 1]}<div class="day-date">${formatDate(date)}</div></div>`; }); timeSlots.forEach(timeSlot => { html += `<div class="time-slot">${timeSlot}</div>`; weekDates.forEach(date => { const shiftKey = getShiftKey(date, timeSlot); const dayShifts = shifts[shiftKey] || []; html += `<div class="shift-cell" id="cell_${shiftKey}">${dayShifts.map((shift, index) => `<div class="shift-entry"><div><div class="employee-name">${shift.employee}</div><div class="shift-time">${shift.startTime} - ${shift.endTime}</div></div><button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${timeSlot}', ${index})">×</button></div>`).join('')}<button class="add-shift-btn" onclick="openShiftModal('${date.toISOString()}', '${timeSlot}')">+ Schicht</button></div>`; }); }); container.innerHTML = html; }
-        function updateStatistics() { const weekDates = getWeekDates(currentWeekOffset); const stats = { totalShifts: 0, totalHours: 0, employeeStats: {} }; employees.forEach(emp => { stats.employeeStats[emp] = { shifts: 0, hours: 0 }; }); weekDates.forEach(date => { timeSlots.forEach(timeSlot => { const shiftKey = getShiftKey(date, timeSlot); const dayShifts = shifts[shiftKey] || []; dayShifts.forEach(shift => { stats.totalShifts++; const start = new Date(`2000-01-01T${shift.startTime}`); const end = new Date(`2000-01-01T${shift.endTime}`); if (end < start) end.setDate(end.getDate() + 1); const hours = (end - start) / (1000 * 60 * 60); stats.totalHours += hours; if (stats.employeeStats[shift.employee]) { stats.employeeStats[shift.employee].shifts++; stats.employeeStats[shift.employee].hours += hours; } }); }); }); const container = document.getElementById('statisticsGrid'); const topEmployee = Object.keys(stats.employeeStats).reduce((a, b) => stats.employeeStats[a].hours > stats.employeeStats[b].hours ? a : b, employees[0] || 'Niemand'); container.innerHTML = `<div class="stat-card"><div class="stat-number">${stats.totalShifts}</div><div class="stat-label">Gesamte Schichten</div></div><div class="stat-card"><div class="stat-number">${Math.round(stats.totalHours)}h</div><div class="stat-label">Gesamte Stunden</div></div><div class="stat-card"><div class="stat-number">${employees.length}</div><div class="stat-label">Mitarbeiter</div></div><div class="stat-card"><div class="stat-number">${topEmployee}</div><div class="stat-label">Meiste Stunden</div></div>`; }
-        function showNotification(message, type = 'success') { const notification = document.getElementById('notification'); notification.textContent = message; notification.className = `notification ${type}`; notification.classList.add('show'); setTimeout(() => { notification.classList.remove('show'); }, 3000); }
-        
-        document.addEventListener('DOMContentLoaded', renderAll);
-        document.getElementById('newEmployeeName').addEventListener('keypress', (e) => e.key === 'Enter' && addEmployee());
-        document.getElementById('shiftModal').addEventListener('click', (e) => e.target === document.getElementById('shiftModal') && closeModal());
-    </script>
-</body>
-</html>
+    function addEmployee() { const nameInput = document.getElementById('newEmployeeName'); const name = nameInput.value.trim(); if (name && !employees.includes(name)) { const newEmployees = [...employees, name]; database.ref('schedule/employees').set(newEmployees); nameInput.value = ''; } }
+    function removeEmployee(nameToRemove) { if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen? Alle Schichten werden gelöscht.`)) { const newEmployees = employees.filter(emp => emp !== nameToRemove); const newShifts = { ...shifts }; Object.keys(newShifts).forEach(key => { newShifts[key] = newShifts[key].filter(shift => shift.employee !== nameToRemove); if (newShifts[key].length === 0) { delete newShifts[key]; } }); database.ref('schedule').update({ employees: newEmployees, shifts: newShifts }); } }
+    function updateEmployeeList() { const container = document.getElementById('employeeList'); container.innerHTML = employees.map(emp => `<div class="employee-tag">${emp}<button class="remove-employee" onclick="removeEmployee('${emp}')">×</button></div>`).join(''); }
+    function updateModalEmployeeSelect() { const select = document.getElementById('modalEmployee'); select.innerHTML = employees.map(emp => `<option value="${emp}">${emp}</option>`).join(''); }
+
+    function openShiftModal(date, timeSlot) { currentModalSlot = { date, timeSlot }; document.getElementById('shiftModal').style.display = 'block'; updateModalEmployeeSelect(); }
+    function closeModal() { document.getElementById('shiftModal').style.display = 'none'; currentModalSlot = null; }
+    function saveShift() { if (!currentModalSlot) return; const employee = document.getElementById('modalEmployee').value; const startTime = document.getElementById('modalStartTime').value; const endTime = document.getElementById('modalEndTime').value; if (!employee || !startTime || !endTime) { return; } const shiftKey = getShiftKey(new Date(currentModalSlot.date), currentModalSlot.timeSlot); const newShift = { employee, startTime, endTime }; const currentShiftsInSlot = shifts[shiftKey] || []; const updatedShiftsInSlot = [...currentShiftsInSlot, newShift]; database.ref(`schedule/shifts/${shiftKey}`).set(updatedShiftsInSlot); closeModal(); }
+    function removeShift(dateStr, timeSlot, index) { const date = new Date(dateStr); const shiftKey = getShiftKey(date, timeSlot); if (shifts[shiftKey] && shifts[shiftKey][index]) { const updatedShiftsInSlot = [...shifts[shiftKey]]; updatedShiftsInSlot.splice(index, 1); if (updatedShiftsInSlot.length > 0) { database.ref(`schedule/shifts/${shiftKey}`).set(updatedShiftsInSlot); } else { database.ref(`schedule/shifts/${shiftKey}`).remove(); } } }
+    function clearAllShifts() { if (confirm('Wirklich alle Schichten dieser Woche löschen?')) { const weekDates = getWeekDates(currentWeekOffset); const updates = {}; weekDates.forEach(date => { timeSlots.forEach(timeSlot => { const shiftKey = getShiftKey(date, timeSlot); if (shifts[shiftKey]) { updates[`/schedule/shifts/${shiftKey}`] = null; } }); }); database.ref().update(updates); } }
+
+    function changeWeek(direction) { currentWeekOffset += direction; renderAll(); }
+    function updateWeekDisplay() { const weekDates = getWeekDates(currentWeekOffset); const weekNumber = getWeekNumber(weekDates[0]); const startDate = formatDate(weekDates[0]); const endDate = formatDate(weekDates[6]); document.getElementById('currentWeek').textContent = `KW ${getWeekNumber(new Date())} (${startDate} - ${endDate})`; }
+    function renderSchedule() { const container = document.getElementById('scheduleGrid'); const weekDates = getWeekDates(currentWeekOffset); let html = '<div class="time-slot">Uhrzeit</div>'; weekDates.forEach(date => { html += `<div class="day-header">${dayNames[date.getDay() === 0 ? 6 : date.getDay() - 1]}<div class="day-date">${formatDate(date)}</div></div>`; }); timeSlots.forEach(timeSlot => { html += `<div class="time-slot">${timeSlot}</div>`; weekDates.forEach(date => { const shiftKey = getShiftKey(date, timeSlot); const dayShifts = shifts[shiftKey] || []; html += `<div class="shift-cell" id="cell_${shiftKey}">${dayShifts.map((shift, index) => `<div class="shift-entry"><div><div class="employee-name">${shift.employee}</div><div class="shift-time">${shift.startTime} - ${shift.endTime}</div></div><button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${timeSlot}', ${index})">×</button></div>`).join('')}<button class="add-shift-btn" onclick="openShiftModal('${date.toISOString()}', '${timeSlot}')">+ Schicht</button></div>`; }); }); container.innerHTML = html; }
+    function updateStatistics() { const weekDates = getWeekDates(currentWeekOffset); const stats = { totalShifts: 0, totalHours: 0, employeeStats: {} }; employees.forEach(emp => { stats.employeeStats[emp] = { shifts: 0, hours: 0 }; }); weekDates.forEach(date => { timeSlots.forEach(timeSlot => { const shiftKey = getShiftKey(date, timeSlot); const dayShifts = shifts[shiftKey] || []; dayShifts.forEach(shift => { stats.totalShifts++; const start = new Date(`2000-01-01T${shift.startTime}`); const end = new Date(`2000-01-01T${shift.endTime}`); if (end < start) end.setDate(end.getDate() + 1); const hours = (end - start) / (1000 * 60 * 60); stats.totalHours += hours; if (stats.employeeStats[shift.employee]) { stats.employeeStats[shift.employee].shifts++; stats.employeeStats[shift.employee].hours += hours; } }); }); }); const container = document.getElementById('statisticsGrid'); const topEmployee = Object.keys(stats.employeeStats).reduce((a, b) => stats.employeeStats[a].hours > stats.employeeStats[b].hours ? a : b, employees[0] || 'Niemand'); container.innerHTML = `<div class="stat-card"><div class="stat-number">${stats.totalShifts}</div><div class="stat-label">Gesamte Schichten</div></div><div class="stat-card"><div class="stat-number">${Math.round(stats.totalHours)}h</div><div class="stat-label">Gesamte Stunden</div></div><div class="stat-card"><div class="stat-number">${employees.length}</div><div class="stat-label">Mitarbeiter</div></div><div class="stat-card"><div class="stat-number">${topEmployee}</div><div class="stat-label">Meiste Stunden</div></div>`; }
+    
+    document.addEventListener('DOMContentLoaded', renderAll);
+    document.getElementById('newEmployeeName').addEventListener('keypress', (e) => e.key === 'Enter' && addEmployee());
+    document.getElementById('shiftModal').addEventListener('click', (e) => e.target === document.getElementById('shiftModal') && closeModal());
+</script>

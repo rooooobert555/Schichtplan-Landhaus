@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landhaus Fillert - Schichtplan</title>
     <style>
+        /* ... CSS ist fast identisch, hier wird nur die neue Notiz-Klasse hinzugefügt ... */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); overflow: hidden; }
@@ -16,7 +17,6 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         .week-navigation { display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 20px; }
         .week-nav-btn { background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.3); color: white; padding: 12px 20px; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; font-size: 16px; }
-        .week-nav-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
         .current-week { font-size: 1.2em; font-weight: bold; min-width: 250px; text-align: center;}
         .controls { padding: 20px 30px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
         .employee-management { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
@@ -34,7 +34,9 @@
         .shift-cell { background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 15px; min-height: 120px; position: relative; display: flex; flex-direction: column; }
         .shift-cell-content { flex-grow: 1; }
         .shift-entry { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .shift-details { flex-grow: 1; overflow: hidden; } /* NEU */
         .employee-name { font-weight: bold; }
+        .shift-note { font-size: 0.8em; opacity: 0.9; margin-top: 4px; font-style: italic; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 4px; } /* NEU */
         .remove-shift { background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; }
         .add-shift-btn { width: 100%; background: rgba(102, 126, 234, 0.1); border: 2px dashed #667eea; color: #667eea; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: auto; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; }
@@ -83,6 +85,10 @@
             <div class="form-group">
                 <label for="modalEmployee">Mitarbeiter:</label>
                 <select id="modalEmployee"></select>
+            </div>
+            <div class="form-group">
+                <label for="modalNote">Notiz (optional):</label>
+                <textarea id="modalNote" rows="3" placeholder="Besondere Aufgaben für diese Schicht..."></textarea>
             </div>
             <div class="form-buttons">
                 <button class="btn" onclick="closeModal()" style="background: #6c757d; color: white;">Abbrechen</button>
@@ -140,68 +146,8 @@
             renderSchedule();
         }
 
-        function getWeekDates(offset = 0) {
-            const today = new Date();
-            const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
-            const monday = new Date(today);
-            monday.setDate(today.getDate() - dayOfWeek + 1 + (offset * 7));
-            const dates = [];
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(monday);
-                date.setDate(monday.getDate() + i);
-                dates.push(date);
-            }
-            return dates;
-        }
-
-        function getWeekNumber(date) {
-            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-            const dayNum = d.getUTCDay() || 7;
-            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-            const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-            return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-        }
-
-        function formatDate(date) {
-            return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
-        }
-
-        function getShiftKey(date, timeSlot) {
-            const safeTimeSlot = timeSlot.replace(/[.$#[\]/]/g, '_');
-            return `${date.toISOString().split('T')[0]}__${safeTimeSlot}`;
-        }
-        
-        function changeWeek(direction) {
-            currentWeekOffset += direction;
-            renderAll();
-        }
-        
-        function updateWeekDisplay() {
-            const weekDates = getWeekDates(currentWeekOffset);
-            const startDate = formatDate(weekDates[0]);
-            const endDate = formatDate(weekDates[6]);
-            const weekNumber = getWeekNumber(weekDates[0]); 
-            document.getElementById('currentWeek').textContent = `KW ${weekNumber} (${startDate} - ${endDate})`;
-        }
-
-        function addEmployee() {
-            const nameInput = document.getElementById('newEmployeeName');
-            const name = nameInput.value.trim();
-            if (name && !employees.includes(name)) {
-                dbRef.child('employees').set([...employees, name]);
-                nameInput.value = '';
-            }
-        }
-
-        function removeEmployee(nameToRemove) {
-            if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen?`)) {
-                dbRef.child('employees').set(employees.filter(emp => emp !== nameToRemove));
-            }
-        }
-
         function openModal(date, timeSlot) {
             currentModalSlot = { date, timeSlot };
-            // KORREKTUR: Die ID des Modals ist 'shiftModal'
             document.getElementById('shiftModal').style.display = 'flex';
             const select = document.getElementById('modalEmployee');
             if(employees.length > 0) {
@@ -212,33 +158,49 @@
         }
 
         function closeModal() {
-            // KORREKTUR: Die ID des Modals ist 'shiftModal'
             document.getElementById('shiftModal').style.display = 'none';
+            // Wichtig: Notizfeld beim Schließen leeren
+            document.getElementById('modalNote').value = '';
             currentModalSlot = null;
         }
 
+        // saveShift speichert jetzt ein Objekt statt nur einem Namen
         function saveShift() {
             if (!currentModalSlot) return;
             const employee = document.getElementById('modalEmployee').value;
+            const note = document.getElementById('modalNote').value.trim();
+
             if (!employee) {
                 alert('Bitte einen Mitarbeiter auswählen!');
                 return;
             }
+
             const shiftKey = getShiftKey(new Date(currentModalSlot.date), currentModalSlot.timeSlot);
+            
+            // Das neue Schicht-Objekt
+            const newShift = {
+                employee: employee,
+                note: note
+            };
+            
             const currentShiftsInSlot = shifts[shiftKey] || [];
-            if (currentShiftsInSlot.includes(employee)) {
-                alert(`${employee} ist bereits für diese Schicht eingeteilt.`);
+
+            // Prüfen, ob der Mitarbeiter bereits eingeteilt ist
+            if (currentShiftsInSlot.some(shift => shift.employee === employee)) {
+                 alert(`${employee} ist bereits für diese Schicht eingeteilt.`);
                 return;
             }
-            dbRef.child('shifts').child(shiftKey).set([...currentShiftsInSlot, employee]);
+
+            dbRef.child('shifts').child(shiftKey).set([...currentShiftsInSlot, newShift]);
             closeModal();
         }
 
+        // removeShift muss jetzt das richtige Objekt im Array finden
         function removeShift(dateStr, timeSlot, employeeToRemove) {
             const date = new Date(dateStr);
             const shiftKey = getShiftKey(date, timeSlot);
             if (shifts[shiftKey]) {
-                const updatedShifts = shifts[shiftKey].filter(emp => emp !== employeeToRemove);
+                const updatedShifts = shifts[shiftKey].filter(shift => shift.employee !== employeeToRemove);
                 if (updatedShifts.length > 0) {
                     dbRef.child('shifts').child(shiftKey).set(updatedShifts);
                 } else {
@@ -246,16 +208,11 @@
                 }
             }
         }
-        
-        function updateEmployeeList() {
-            const container = document.getElementById('employeeList');
-            container.innerHTML = employees.map(emp => `<div class="employee-tag">${emp}<button class="remove-employee" onclick="removeEmployee('${emp}')">×</button></div>`).join('');
-        }
 
+        // renderSchedule zeigt jetzt Namen und Notiz an
         function renderSchedule() {
             const grid = document.getElementById('scheduleGrid');
             const weekDates = getWeekDates(currentWeekOffset);
-            // KORREKTUR: Zeilenumbruch für besseres Layout
             let html = '<div class="grid-header time-slot-header">Schicht</div>'; 
             weekDates.forEach(date => { 
                 html += `<div class="grid-header day-header">${dayNames[date.getDay() === 0 ? 6 : date.getDay() - 1]}<br><div class="day-date">${formatDate(date)}</div></div>`; 
@@ -265,16 +222,35 @@
                 html += `<div class="grid-header time-slot-header">${timeSlot}</div>`;
                 weekDates.forEach(date => {
                     const shiftKey = getShiftKey(date, timeSlot);
-                    const assignedEmployees = shifts[shiftKey] || [];
+                    const assignedShifts = shifts[shiftKey] || []; // Enthält jetzt Objekte
                     let shiftsHtml = '';
-                    assignedEmployees.forEach(employee => {
-                        shiftsHtml += `<div class="shift-entry"><span class="employee-name">${employee}</span><button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${timeSlot}', '${employee}')">×</button></div>`;
+                    assignedShifts.forEach(shift => {
+                        shiftsHtml += `
+                            <div class="shift-entry">
+                                <div class="shift-details">
+                                    <div class="employee-name">${shift.employee}</div>
+                                    ${shift.note ? `<div class="shift-note">${shift.note}</div>` : ''}
+                                </div>
+                                <button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${timeSlot}', '${shift.employee}')">×</button>
+                            </div>
+                        `;
                     });
                     html += `<div class="shift-cell"><div class="shift-cell-content">${shiftsHtml}</div><button class="add-shift-btn" onclick="openModal('${date.toISOString()}', '${timeSlot}')">+ Zuweisen</button></div>`;
                 });
             });
             grid.innerHTML = html;
         }
+
+        // --- Unveränderte Funktionen ---
+        function getWeekDates(offset = 0) { const today = new Date(); const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); const monday = new Date(today); monday.setDate(today.getDate() - dayOfWeek + 1 + (offset * 7)); const dates = []; for (let i = 0; i < 7; i++) { const date = new Date(monday); date.setDate(monday.getDate() + i); dates.push(date); } return dates; }
+        function getWeekNumber(date) { const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())); const dayNum = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - dayNum); const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil((((d - yearStart) / 86400000) + 1)/7); }
+        function formatDate(date) { return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }); }
+        function getShiftKey(date, timeSlot) { const safeTimeSlot = timeSlot.replace(/[.$#[\]/]/g, '_'); return `${date.toISOString().split('T')[0]}__${safeTimeSlot}`; }
+        function changeWeek(direction) { currentWeekOffset += direction; renderAll(); }
+        function updateWeekDisplay() { const weekDates = getWeekDates(currentWeekOffset); const startDate = formatDate(weekDates[0]); const endDate = formatDate(weekDates[6]); const weekNumber = getWeekNumber(weekDates[0]); document.getElementById('currentWeek').textContent = `KW ${weekNumber} (${startDate} - ${endDate})`; }
+        function addEmployee() { const nameInput = document.getElementById('newEmployeeName'); const name = nameInput.value.trim(); if (name && !employees.includes(name)) { dbRef.child('employees').set([...employees, name]); nameInput.value = ''; } }
+        function removeEmployee(nameToRemove) { if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen?`)) { dbRef.child('employees').set(employees.filter(emp => emp !== nameToRemove)); } }
+        function updateEmployeeList() { const container = document.getElementById('employeeList'); container.innerHTML = employees.map(emp => `<div class="employee-tag">${emp}<button class="remove-employee" onclick="removeEmployee('${emp}')">×</button></div>`).join(''); }
         
         document.addEventListener('DOMContentLoaded', renderAll);
     </script>

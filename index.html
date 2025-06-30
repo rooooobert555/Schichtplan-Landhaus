@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landhaus Fillert - Schichtplan</title>
     <style>
-        /* CSS bleibt größtenteils gleich, mit kleinen Anpassungen für Notizen */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); overflow: hidden; }
@@ -22,37 +21,30 @@
         .controls { padding: 20px 30px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
         .employee-management { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
         .input-group { display: flex; gap: 10px; align-items: center; }
-        input[type="text"], input[type="time"], textarea, select { padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; transition: border-color 0.3s ease; width: 100%; box-sizing: border-box; }
-        input[type="text"]:focus, input[type="time"]:focus, textarea:focus, select:focus { outline: none; border-color: #667eea; }
-        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s ease; }
+        input[type="text"] { padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 14px; transition: border-color 0.3s ease; width: auto; }
+        select, input[type="time"], textarea { width: 100%; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
         .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .schedule-container { padding: 30px; }
-        .schedule-grid { display: grid; grid-template-columns: 120px repeat(7, 1fr); gap: 15px; margin-bottom: 30px; }
-        .time-slot { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; padding: 15px 10px; text-align: center; border-radius: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; min-height: 80px; }
-        .day-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; text-align: center; border-radius: 10px; font-weight: bold; }
+        .schedule-container { padding: 30px; overflow-x: auto; }
+        .schedule-grid { display: grid; grid-template-columns: 150px repeat(7, 1fr); gap: 10px; margin-bottom: 30px; min-width: 1100px; }
+        .grid-header { font-weight: bold; padding: 15px; text-align: center; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: center; }
+        .day-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .time-slot-header { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); }
         .day-date { font-size: 0.9em; opacity: 0.9; margin-top: 5px; }
         .shift-cell { background: white; border: 2px solid #e9ecef; border-radius: 10px; padding: 15px; min-height: 120px; position: relative; display: flex; flex-direction: column; }
         .shift-cell-content { flex-grow: 1; }
-        .shift-entry { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; animation: slideIn 0.3s ease; }
-        .shift-details { flex-grow: 1; }
+        .shift-entry { background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .employee-name { font-weight: bold; }
-        .shift-time { font-size: 0.9em; }
-        .shift-note { font-size: 0.8em; opacity: 0.8; margin-top: 4px; font-style: italic; background: rgba(0,0,0,0.1); padding: 3px 6px; border-radius: 4px; word-wrap: break-word; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
         .remove-shift { background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px; flex-shrink: 0; }
-        .add-shift-btn { width: 100%; background: rgba(102, 126, 234, 0.1); border: 2px dashed #667eea; color: #667eea; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; margin-top: auto; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 1000; }
-        .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); width: 90%; max-width: 450px; }
-        .modal h3 { margin-bottom: 20px; color: #2c3e50; text-align: center; }
+        .add-shift-btn { width: 100%; background: rgba(102, 126, 234, 0.1); border: 2px dashed #667eea; color: #667eea; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: auto; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
         .form-buttons { display: flex; gap: 15px; justify-content: flex-end; margin-top: 25px; }
         .employee-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
         .employee-tag { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 15px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-        .remove-employee { background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 18px; height: 18px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .statistics { background: #f8f9fa; padding: 20px; border-radius: 15px; margin-top: 30px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; border-left: 4px solid #667eea; }
+        .remove-employee { background: rgba(255, 255, 255, 0.2); border: none; color: white; width: 18px; height: 18px; border-radius: 50%; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -76,42 +68,25 @@
                     <input type="text" id="newEmployeeName" placeholder="Neuer Mitarbeiter..." maxlength="30">
                     <button class="btn btn-primary" onclick="addEmployee()">Hinzufügen</button>
                 </div>
-                <button class="btn btn-danger" onclick="clearAllShifts()">Alle Schichten löschen</button>
             </div>
             <div class="employee-list" id="employeeList"></div>
         </div>
 
         <div class="schedule-container">
             <div class="schedule-grid" id="scheduleGrid"></div>
-            <div class="statistics">
-                <h3>📊 Wochenstatistiken</h3>
-                <div class="stats-grid" id="statisticsGrid"></div>
-            </div>
         </div>
     </div>
 
     <div class="modal" id="shiftModal">
         <div class="modal-content">
-            <h3>Neue Schicht hinzufügen</h3>
+            <h3>Mitarbeiter zuweisen</h3>
             <div class="form-group">
                 <label for="modalEmployee">Mitarbeiter:</label>
                 <select id="modalEmployee"></select>
             </div>
-            <div class="form-group">
-                <label for="modalStartTime">Startzeit:</label>
-                <input type="time" id="modalStartTime" value="09:00">
-            </div>
-            <div class="form-group">
-                <label for="modalEndTime">Endzeit:</label>
-                <input type="time" id="modalEndTime" value="17:00">
-            </div>
-            <div class="form-group">
-                <label for="modalShiftNote">Notiz (optional):</label>
-                <textarea id="modalShiftNote" rows="2" placeholder="Besondere Aufgaben, Infos..."></textarea>
-            </div>
             <div class="form-buttons">
                 <button class="btn" onclick="closeModal()" style="background: #6c757d; color: white;">Abbrechen</button>
-                <button class="btn btn-primary" onclick="saveShift()">Schicht speichern</button>
+                <button class="btn btn-primary" onclick="saveShift()">Zuweisen</button>
             </div>
         </div>
     </div>
@@ -122,65 +97,40 @@
     <script>
         // ============== DEINE FIREBASE CONFIG HIER EINFÜGEN ==============
         const firebaseConfig = {
-
-  apiKey: "AIzaSyDtCPZ5YTOQxNrjAwCtIoSVh1-4nlPWHCs",
-
-  authDomain: "schichtplan-e6649.firebaseapp.com",
-
-  databaseURL: "https://schichtplan-e6649-default-rtdb.europe-west1.firebasedatabase.app",
-
-  projectId: "schichtplan-e6649",
-
-  storageBucket: "schichtplan-e6649.firebasestorage.app",
-
-  messagingSenderId: "997401888806",
-
-  appId: "1:997401888806:web:b80e084f322b27dc4ffee7",
-
-  measurementId: "G-WTXQB37FFW"
-
+            apiKey: "AIzaSyDtCPZ5YTOQxNrjAwCtIoSVh1-4nlPWHCs",
+            authDomain: "schichtplan-e6649.firebaseapp.com",
+            databaseURL: "https://schichtplan-e6649-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "schichtplan-e6649",
+            storageBucket: "schichtplan-e6649.firebasestorage.app",
+            messagingSenderId: "997401888806",
+            appId: "1:997401888806:web:b80e084f322b27dc4ffee7"
         };
         // ===============================================================
 
-        // Firebase initialisieren
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const dbRef = database.ref('/schedule');
+        const dbRef = database.ref('/scheduleSimple'); // Wichtig: Neuer Pfad für die einfache Version
         
-        // Globale Variablen
         let employees = [];
         let shifts = {};
         let currentWeekOffset = 0;
         let currentModalSlot = null;
 
-        const timeSlots = ['06:00 - 14:00', '14:00 - 22:00', '22:00 - 06:00'];
+        // Zurück zu den einfachen, festen Zeitfenstern
+        const timeSlots = ['Frühschicht (06-14 Uhr)', 'Spätschicht (14-22 Uhr)', 'Nachtschicht (22-06 Uhr)'];
         const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
         
-        // Listener für Verbindungsstatus
         database.ref('.info/connected').on('value', (snap) => {
-            const statusDot = document.getElementById('statusDot');
-            const statusText = document.getElementById('connectionStatus');
-            if (snap.val() === true) {
-                statusDot.className = 'status-dot';
-                statusText.textContent = 'Online';
-            } else {
-                statusDot.className = 'status-dot offline';
-                statusText.textContent = 'Offline';
-            }
+            document.getElementById('statusDot').className = snap.val() ? 'status-dot' : 'status-dot offline';
+            document.getElementById('connectionStatus').textContent = snap.val() ? 'Online' : 'Offline';
         });
 
-        // Listener für Datenänderungen
         dbRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data && data.employees) {
-                employees = data.employees;
-                shifts = data.shifts || {};
-            } else {
-                const initialData = {
-                    employees: ["Max Mustermann", "Anna Schmidt"],
-                    shifts: {}
-                };
-                dbRef.set(initialData);
+            const data = snapshot.val() || {};
+            employees = data.employees || [];
+            shifts = data.shifts || {};
+            if (!data.employees) {
+                dbRef.child('employees').set(["Max Mustermann", "Anna Schmidt"]);
             }
             renderAll();
         });
@@ -188,17 +138,14 @@
         function renderAll() {
             updateWeekDisplay();
             updateEmployeeList();
-            updateModalEmployeeSelect();
             renderSchedule();
         }
 
-        // --- HILFSFUNKTIONEN ---
         function getWeekDates(offset = 0) {
             const today = new Date();
-            const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); // Montag = 1, Sonntag = 7
+            const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
             const monday = new Date(today);
             monday.setDate(today.getDate() - dayOfWeek + 1 + (offset * 7));
-            
             const dates = [];
             for (let i = 0; i < 7; i++) {
                 const date = new Date(monday);
@@ -221,10 +168,10 @@
         }
 
         function getShiftKey(date, timeSlot) {
-            return `${date.toISOString().split('T')[0]}__${timeSlot.replace(/ /g, '').replace(/:/g, '')}`;
+            const safeTimeSlot = timeSlot.replace(/[.$#[\]/]/g, '_');
+            return `${date.toISOString().split('T')[0]}__${safeTimeSlot}`;
         }
         
-        // --- HAUPTFUNKTIONEN ---
         function changeWeek(direction) {
             currentWeekOffset += direction;
             renderAll();
@@ -234,7 +181,6 @@
             const weekDates = getWeekDates(currentWeekOffset);
             const startDate = formatDate(weekDates[0]);
             const endDate = formatDate(weekDates[6]);
-            // BUG-FIX: Benutze das Datum der angezeigten Woche
             const weekNumber = getWeekNumber(weekDates[0]); 
             document.getElementById('currentWeek').textContent = `KW ${weekNumber} (${startDate} - ${endDate})`;
         }
@@ -243,11 +189,90 @@
             const nameInput = document.getElementById('newEmployeeName');
             const name = nameInput.value.trim();
             if (name && !employees.includes(name)) {
-                const newEmployees = [...employees, name];
-                database.ref('schedule/employees').set(newEmployees);
+                dbRef.child('employees').set([...employees, name]);
                 nameInput.value = '';
             }
         }
 
         function removeEmployee(nameToRemove) {
-            if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen? Alle zugehörigen Schichten werden gelöscht
+            if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen?`)) {
+                dbRef.child('employees').set(employees.filter(emp => emp !== nameToRemove));
+            }
+        }
+
+        function openModal(date, timeSlot) {
+            currentModalSlot = { date, timeSlot };
+            document.getElementById('modal').style.display = 'flex';
+            const select = document.getElementById('modalEmployee');
+            if(employees.length > 0) {
+                select.innerHTML = employees.map(emp => `<option value="${emp}">${emp}</option>`).join('');
+            } else {
+                select.innerHTML = '<option disabled>Bitte zuerst Mitarbeiter anlegen</option>';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            currentModalSlot = null;
+        }
+
+        function saveShift() {
+            if (!currentModalSlot) return;
+            const employee = document.getElementById('modalEmployee').value;
+            if (!employee) {
+                alert('Bitte einen Mitarbeiter auswählen!');
+                return;
+            }
+            const shiftKey = getShiftKey(new Date(currentModalSlot.date), currentModalSlot.timeSlot);
+            const currentShiftsInSlot = shifts[shiftKey] || [];
+            if (currentShiftsInSlot.includes(employee)) {
+                alert(`${employee} ist bereits für diese Schicht eingeteilt.`);
+                return;
+            }
+            dbRef.child('shifts').child(shiftKey).set([...currentShiftsInSlot, employee]);
+            closeModal();
+        }
+
+        function removeShift(dateStr, timeSlot, employeeToRemove) {
+            const date = new Date(dateStr);
+            const shiftKey = getShiftKey(date, timeSlot);
+            if (shifts[shiftKey]) {
+                const updatedShifts = shifts[shiftKey].filter(emp => emp !== employeeToRemove);
+                if (updatedShifts.length > 0) {
+                    dbRef.child('shifts').child(shiftKey).set(updatedShifts);
+                } else {
+                    dbRef.child('shifts').child(shiftKey).remove();
+                }
+            }
+        }
+        
+        function updateEmployeeList() {
+            const container = document.getElementById('employeeList');
+            container.innerHTML = employees.map(emp => `<div class="employee-tag">${emp}<button class="remove-employee" onclick="removeEmployee('${emp}')">×</button></div>`).join('');
+        }
+
+        function renderSchedule() {
+            const grid = document.getElementById('scheduleGrid');
+            const weekDates = getWeekDates(currentWeekOffset);
+            let html = '<div class="grid-header time-slot-header">Schicht</div>'; 
+            weekDates.forEach(date => { html += `<div class="grid-header day-header">${dayNames[date.getDay() === 0 ? 6 : date.getDay() - 1]}<div class="day-date">${formatDate(date)}</div></div>`; });
+            
+            timeSlots.forEach(timeSlot => {
+                html += `<div class="grid-header time-slot-header">${timeSlot}</div>`;
+                weekDates.forEach(date => {
+                    const shiftKey = getShiftKey(date, timeSlot);
+                    const assignedEmployees = shifts[shiftKey] || [];
+                    let shiftsHtml = '';
+                    assignedEmployees.forEach(employee => {
+                        shiftsHtml += `<div class="shift-entry"><span class="employee-name">${employee}</span><button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${timeSlot}', '${employee}')">×</button></div>`;
+                    });
+                    html += `<div class="shift-cell"><div class="shift-cell-content">${shiftsHtml}</div><button class="add-shift-btn" onclick="openModal('${date.toISOString()}', '${timeSlot}')">+ Zuweisen</button></div>`;
+                });
+            });
+            grid.innerHTML = html;
+        }
+        
+        document.addEventListener('DOMContentLoaded', renderAll);
+    </script>
+</body>
+</html>

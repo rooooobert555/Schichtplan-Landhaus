@@ -3,356 +3,882 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landhaus Fillert - Schichtplan</title>
+    <title>Landhaus Fillert - Schichtplan Professional</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            background: #f0f2f5; 
-            min-height: 100vh; 
-            margin: 0; 
-        }
-        .auth-container, .container { 
-            background: white; 
-            margin: 40px auto; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            max-width: 500px; 
-            padding: 40px; 
-        }
-        .container {
-            max-width: 1200px;
-        }
-        .auth-container h2, .container h1 { 
-            color: #34495e; 
-            text-align: center;
-        }
-        .form-group { 
-            margin-bottom: 20px; 
-        }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-weight: bold; 
-        }
-        .form-group input, .form-group textarea, .form-group select { 
-            width: 100%; 
-            padding: 10px; 
-            border: 2px solid #e9ecef; 
-            border-radius: 8px; 
-            font-size: 14px; 
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        .btn { 
-            padding: 12px 20px; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: bold; 
-            transition: background-color 0.3s;
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+            --gray-100: #f7fafc;
+            --gray-200: #edf2f7;
+            --gray-300: #e2e8f0;
+            --gray-400: #cbd5e0;
+            --gray-500: #a0aec0;
+            --gray-600: #718096;
+            --gray-700: #4a5568;
+            --gray-800: #2d3748;
+            --gray-900: #1a202c;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--gray-100);
+            min-height: 100vh;
+            color: var(--gray-800);
+        }
+
+        /* Auth Container */
+        .auth-container {
+            background: white;
+            margin: 40px auto;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            max-width: 400px;
+            padding: 40px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-container h2 {
+            color: var(--gray-800);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        /* Main Container */
+        .container {
+            background: white;
+            margin: 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            max-width: 1400px;
+            margin: 20px auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            color: var(--gray-800);
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--gray-100);
+            padding: 10px 20px;
+            border-radius: 12px;
+        }
+
+        .user-role {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .btn:hover {
-            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
         }
-        .btn-primary { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            color: white; 
+
+        .btn:active {
+            transform: translateY(0);
         }
-        .btn-danger { 
-            background: #ff6b6b; 
-            color: white; 
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
         }
-        .tag-list { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 10px; 
-            margin-top: 10px; 
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
         }
-        .tag { 
-            background: #667eea; 
-            color: white; 
-            padding: 8px 15px; 
-            border-radius: 20px; 
-            font-size: 14px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
         }
-        .remove-tag { 
-            background: #ff6b6b; 
-            border: none; 
-            color: white; 
-            width: 18px; 
-            height: 18px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            font-size: 12px;
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-icon {
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--gray-200);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        /* Week Navigation */
+        .week-navigation {
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 12px;
         }
-        .header { 
-            text-align: center; 
-            margin-bottom: 30px; 
+
+        .week-nav-btn {
+            background: white;
+            border: 2px solid var(--gray-200);
+            color: var(--gray-700);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
         }
-        .week-navigation { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 20px; 
-            margin-bottom: 20px; 
-        }
-        .week-nav-btn { 
-            background: #e9ecef; 
-            border: none; 
-            color: #34495e; 
-            padding: 8px 16px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: background-color 0.3s;
-        }
+
         .week-nav-btn:hover {
-            background: #d6dbdf;
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
-        .current-week { 
-            font-size: 1.1em; 
-            font-weight: bold; 
+
+        .current-week {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-800);
         }
-        .schedule-grid { 
-            display: grid; 
-            grid-template-columns: 180px repeat(7, 1fr); 
-            gap: 8px; 
-            margin-bottom: 30px; 
-            min-width: 900px; 
+
+        /* Employee & Shift Type Management */
+        .management-section {
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
-        .grid-header { 
-            font-weight: bold; 
-            padding: 10px; 
-            text-align: center; 
-            border-radius: 10px; 
-            color: white; 
-            background: #667eea; 
-        }
-        .shift-type-header { 
-            background: #34495e; 
-        }
-        .day-header { 
-            background: #667eea; 
-        }
-        .shift-cell { 
-            background: #f8f9fa; 
-            border: 2px solid #e9ecef; 
-            border-radius: 10px; 
-            padding: 10px; 
-            min-height: 80px; 
-            position: relative; 
-        }
-        .shift-entry { 
-            background: #44a08d; 
-            color: white; 
-            padding: 6px 10px; 
-            border-radius: 8px; 
-            margin-bottom: 6px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-        .shift-details { 
-            flex-grow: 1; 
-        }
-        .employee-name { 
-            font-weight: bold; 
-        }
-        .shift-note { 
-            font-size: 0.9em; 
-            opacity: 0.9; 
-            margin-top: 2px; 
-            font-style: italic; 
-        }
-        .remove-shift { 
-            background: #ff6b6b; 
-            border: none; 
-            color: white; 
-            width: 20px; 
-            height: 20px; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            margin-left: 8px; 
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .add-shift-btn { 
-            width: 100%; 
-            background: #e9ecef; 
-            color: #667eea; 
-            padding: 8px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            border: 1px dashed #667eea; 
-            margin-top: 6px; 
-            transition: background-color 0.3s;
-        }
-        .add-shift-btn:hover {
-            background: #d6dbdf;
-        }
-        .modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            background: rgba(0,0,0,0.4); 
-            z-index: 1000; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        .modal-content { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 15px; 
-            width: 90%; 
-            max-width: 400px; 
-        }
-        .form-buttons { 
-            display: flex; 
-            gap: 15px; 
-            justify-content: flex-end; 
-            margin-top: 25px; 
-        }
-        .error-message {
-            color: #ff6b6b;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .success-message {
-            color: #44a08d;
-            font-size: 14px;
-            margin-top: 5px;
-        }
+
         .input-group {
             display: flex;
             gap: 10px;
             align-items: flex-end;
         }
+
         .input-group input {
             flex: 1;
         }
-        .auth-toggle {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #667eea;
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .remove-tag {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
             cursor: pointer;
-            text-decoration: underline;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
         }
-        .auth-toggle:hover {
-            color: #764ba2;
+
+        .remove-tag:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
         }
-        @media (max-width: 1100px) { 
-            .schedule-grid { 
-                min-width: 600px; 
-                font-size: 13px; 
-            } 
+
+        /* Schedule Grid */
+        .schedule-container {
+            overflow-x: auto;
+            margin: -10px;
+            padding: 10px;
         }
-        @media (max-width: 700px) { 
-            .container, .auth-container { 
-                padding: 20px; 
-                margin: 20px auto;
-            } 
-            .schedule-grid { 
-                min-width: 400px; 
-                font-size: 12px; 
-            } 
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 200px repeat(7, minmax(140px, 1fr));
+            gap: 10px;
+            min-width: 1000px;
+        }
+
+        .grid-header {
+            font-weight: 700;
+            padding: 15px;
+            text-align: center;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .shift-type-header {
+            background: var(--gray-700);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .day-header {
+            background: var(--primary);
+            font-size: 14px;
+        }
+
+        .day-header .date {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .shift-cell {
+            background: var(--gray-50);
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 12px;
+            min-height: 120px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .shift-cell:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .shift-cell.drag-over {
+            background: var(--primary);
+            opacity: 0.2;
+        }
+
+        .shift-entry {
+            background: white;
+            border: 2px solid var(--gray-200);
+            color: var(--gray-800);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            transition: all 0.2s;
+        }
+
+        .shift-entry:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .shift-entry.dragging {
+            opacity: 0.5;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .shift-note {
+            font-size: 12px;
+            color: var(--gray-600);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .remove-shift {
+            background: var(--danger);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            opacity: 0.8;
+        }
+
+        .remove-shift:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .add-shift-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            border: none;
+            margin-top: 8px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .add-shift-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Employee Sidebar for Drag & Drop */
+        .employee-sidebar {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .employee-sidebar h3 {
+            margin-bottom: 15px;
+            color: var(--gray-800);
+        }
+
+        .employee-card {
+            background: var(--gray-100);
+            border: 2px solid var(--gray-200);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: move;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .employee-card:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .employee-card.dragging {
+            opacity: 0.5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: var(--gray-800);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        /* Messages */
+        .message {
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .error-message {
+            background: rgba(245, 101, 101, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(245, 101, 101, 0.3);
+        }
+
+        .success-message {
+            background: rgba(72, 187, 120, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(72, 187, 120, 0.3);
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--gray-300);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .employee-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-grid {
+                display: block;
+            }
+
+            .day-schedule {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: var(--shadow);
+            }
+
+            .day-schedule h3 {
+                color: var(--primary);
+                margin-bottom: 15px;
+            }
+
+            .shift-type-section {
+                margin-bottom: 15px;
+                padding: 15px;
+                background: var(--gray-50);
+                border-radius: 10px;
+            }
+
+            .shift-type-section h4 {
+                color: var(--gray-700);
+                margin-bottom: 10px;
+            }
+
+            .add-shift-btn {
+                font-size: 16px;
+                padding: 15px;
+            }
+
+            .grid-header {
+                display: none;
+            }
+
+            .mobile-fab {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                font-size: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: var(--shadow-lg);
+                cursor: pointer;
+                transition: all 0.3s;
+                z-index: 100;
+            }
+
+            .mobile-fab:hover {
+                transform: scale(1.1);
+                background: var(--primary-dark);
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                margin: 0;
+            }
+
+            .btn, .remove-tag, .remove-shift, .add-shift-btn {
+                display: none !important;
+            }
+
+            .schedule-grid {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Auth -->
+    <!-- Auth Container -->
     <div id="authContainer" class="auth-container">
         <div id="loginView">
-            <h2>Login zum Schichtplan</h2>
+            <h2>🏠 Landhaus Fillert - Login</h2>
             <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="E-Mail" required>
+                <label for="loginEmail">E-Mail</label>
+                <input type="email" id="loginEmail" placeholder="ihre.email@beispiel.de" required>
             </div>
             <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="Passwort" required>
+                <label for="loginPassword">Passwort</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" required>
             </div>
-            <button class="btn btn-primary" onclick="login()">Anmelden</button>
+            <button class="btn btn-primary" style="width: 100%;" onclick="login()">
+                <span>Anmelden</span>
+            </button>
             <div id="loginError" class="error-message" style="display: none;"></div>
-            <a class="auth-toggle" onclick="toggleView()">Noch kein Konto? Registrieren</a>
+            <a class="auth-toggle" style="display: block; text-align: center; margin-top: 20px; color: var(--primary); cursor: pointer;" onclick="toggleView()">
+                Noch kein Konto? Registrieren
+            </a>
         </div>
         <div id="registerView" style="display: none;">
-            <h2>Neues Konto erstellen</h2>
+            <h2>🏠 Neues Konto erstellen</h2>
             <div class="form-group">
-                <input type="email" id="registerEmail" placeholder="E-Mail" required>
+                <label for="registerEmail">E-Mail</label>
+                <input type="email" id="registerEmail" placeholder="ihre.email@beispiel.de" required>
             </div>
             <div class="form-group">
-                <input type="password" id="registerPassword" placeholder="Passwort (min. 6 Zeichen)" required>
+                <label for="registerPassword">Passwort</label>
+                <input type="password" id="registerPassword" placeholder="Mindestens 6 Zeichen" required>
             </div>
-            <button class="btn btn-primary" onclick="register()">Registrieren</button>
+            <button class="btn btn-primary" style="width: 100%;" onclick="register()">
+                <span>Registrieren</span>
+            </button>
             <div id="registerError" class="error-message" style="display: none;"></div>
-            <a class="auth-toggle" onclick="toggleView()">Bereits ein Konto? Anmelden</a>
+            <a class="auth-toggle" style="display: block; text-align: center; margin-top: 20px; color: var(--primary); cursor: pointer;" onclick="toggleView()">
+                Bereits ein Konto? Anmelden
+            </a>
         </div>
     </div>
 
-    <!-- App -->
+    <!-- Main App Container -->
     <div id="appContainer" style="display:none;">
         <div class="container">
+            <!-- Header -->
             <div class="header">
-                <h1>Landhaus Fillert Schichtplan</h1>
-                <div id="userInfo" style="margin-top:10px;"></div>
+                <h1>📅 Landhaus Fillert Schichtplan</h1>
+                <div class="user-info">
+                    <span id="userEmail">user@example.com</span>
+                    <span class="user-role" id="userRole">Mitarbeiter</span>
+                    <button class="btn btn-danger btn-icon" onclick="logout()">
+                        <span>Logout</span>
+                    </button>
+                </div>
             </div>
 
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h3>Diese Woche</h3>
+                    <div class="value" id="weekShifts">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Offene Schichten</h3>
+                    <div class="value" id="openShifts">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mitarbeiter</h3>
+                    <div class="value" id="totalEmployees">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Schichttypen</h3>
+                    <div class="value" id="totalShiftTypes">0</div>
+                </div>
+            </div>
+
+            <!-- Week Navigation -->
             <div class="week-navigation">
-                <button class="week-nav-btn" onclick="changeWeek(-1)">← Vorherige Woche</button>
-                <div class="current-week" id="currentWeek"></div>
-                <button class="week-nav-btn" onclick="changeWeek(1)">Nächste Woche →</button>
+                <button class="week-nav-btn" onclick="changeWeek(-1)">
+                    ← Vorherige
+                </button>
+                <div class="current-week" id="currentWeek">KW 1 (01.01. - 07.01.)</div>
+                <button class="week-nav-btn" onclick="changeWeek(1)">
+                    Nächste →
+                </button>
+                <button class="btn btn-secondary" onclick="goToToday()">
+                    Heute
+                </button>
             </div>
 
-            <div class="form-group">
-                <label>Mitarbeiter verwalten:</label>
-                <div class="input-group">
-                    <input type="text" id="newEmployeeName" placeholder="Neuer Mitarbeiter..." maxlength="30">
-                    <button class="btn btn-primary" onclick="addEmployee()">Hinzufügen</button>
+            <!-- Management Sections (Admin Only) -->
+            <div id="managementSections" style="display: none;">
+                <div class="management-section">
+                    <label>👥 Mitarbeiter verwalten:</label>
+                    <div class="input-group">
+                        <input type="text" id="newEmployeeName" placeholder="Name des neuen Mitarbeiters..." maxlength="30">
+                        <button class="btn btn-primary" onclick="addEmployee()">Hinzufügen</button>
+                    </div>
+                    <div class="tag-list" id="employeeList"></div>
                 </div>
-                <div class="tag-list" id="employeeList"></div>
-            </div>
 
-            <div class="form-group">
-                <label>Schicht-Typen verwalten:</label>
-                <div class="input-group">
-                    <input type="text" id="newShiftTypeName" placeholder="z.B. Service (09-17 Uhr)" maxlength="40">
-                    <button class="btn btn-primary" onclick="addShiftType()">Hinzufügen</button>
+                <div class="management-section">
+                    <label>🕒 Schicht-Typen verwalten:</label>
+                    <div class="input-group">
+                        <input type="text" id="newShiftTypeName" placeholder="z.B. Frühschicht (06:00-14:00)" maxlength="40">
+                        <button class="btn btn-primary" onclick="addShiftType()">Hinzufügen</button>
+                    </div>
+                    <div class="tag-list" id="shiftTypeList"></div>
                 </div>
-                <div class="tag-list" id="shiftTypeList"></div>
             </div>
 
-            <div style="overflow-x:auto;">
+            <!-- Action Buttons -->
+            <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="toggleDragDropMode()">
+                    🎯 Drag & Drop Modus
+                </button>
+                <button class="btn btn-secondary" onclick="printSchedule()">
+                    🖨️ Drucken
+                </button>
+                <button class="btn btn-secondary" onclick="exportSchedule()">
+                    📥 Exportieren
+                </button>
+            </div>
+
+            <!-- Schedule Grid -->
+            <div class="schedule-container">
                 <div class="schedule-grid" id="scheduleGrid"></div>
+                <!-- Mobile View -->
+                <div id="mobileSchedule" style="display: none;"></div>
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Employee Sidebar for Drag & Drop -->
+        <div class="employee-sidebar" id="employeeSidebar" style="display: none;">
+            <h3>👥 Mitarbeiter</h3>
+            <p style="font-size: 12px; color: var(--gray-600); margin-bottom: 15px;">
+                Ziehen Sie Mitarbeiter auf die gewünschten Schichten
+            </p>
+            <div id="dragEmployeeList"></div>
+        </div>
+
+        <!-- Shift Assignment Modal -->
         <div class="modal" id="shiftModal">
             <div class="modal-content">
-                <h3>Mitarbeiter zuweisen</h3>
+                <h3>👤 Mitarbeiter zur Schicht zuweisen</h3>
+                <div id="modalShiftInfo" style="margin-bottom: 20px; padding: 15px; background: var(--gray-100); border-radius: 10px;">
+                    <strong>Schicht:</strong> <span id="modalShiftType"></span><br>
+                    <strong>Datum:</strong> <span id="modalShiftDate"></span>
+                </div>
                 <div class="form-group">
-                    <label for="modalEmployee">Mitarbeiter:</label>
-                    <select id="modalEmployee"></select>
+                    <label for="modalEmployee">Mitarbeiter auswählen:</label>
+                    <select id="modalEmployee" style="font-size: 16px; padding: 15px;">
+                        <option value="">-- Bitte wählen --</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="modalNote">Notiz (optional):</label>
-                    <textarea id="modalNote" rows="3" placeholder="Besondere Aufgaben für diese Schicht..."></textarea>
+                    <textarea id="modalNote" rows="3" placeholder="z.B. Einarbeitung, besondere Aufgaben..."></textarea>
                 </div>
                 <div class="form-buttons">
-                    <button class="btn" onclick="closeModal()" style="background: #6c757d; color: white;">Abbrechen</button>
-                    <button class="btn btn-primary" onclick="saveShift()">Zuweisen</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">Abbrechen</button>
+                    <button class="btn btn-primary" onclick="saveShift()">
+                        <span class="loading" id="saveLoading" style="display: none;"></span>
+                        <span>Zuweisen</span>
+                    </button>
                 </div>
             </div>
+        </div>
+
+        <!-- Mobile FAB -->
+        <div class="mobile-fab" style="display: none;" onclick="showMobileAddMenu()">
+            +
         </div>
     </div>
 
@@ -362,7 +888,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script>
-        // Firebase Konfiguration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDtCPZ5YTOQxNrjAwCtIoSVh1-4nlPWHCs",
             authDomain: "schichtplan-e6649.firebaseapp.com",
@@ -373,19 +899,19 @@
             appId: "1:997401888806:web:b80e084f322b27dc4ffee7"
         };
 
-        // Globale Firebase-Variablen
+        // Global Variables
         let database, auth, dbRef, scheduleRef;
-
-        // Globale Variablen
         let employees = [];
         let shifts = {};
         let shiftTypes = [];
         let currentWeekOffset = 0;
         let currentModalSlot = null;
-        let isAdmin = false;
+        let currentUser = null;
+        let userRole = 'employee'; // Default role
+        let dragDropMode = false;
         const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 
-        // Firebase initialisieren
+        // Initialize Firebase
         function initializeFirebase() {
             try {
                 firebase.initializeApp(firebaseConfig);
@@ -397,46 +923,89 @@
                 // Auth State Listener
                 auth.onAuthStateChanged(user => {
                     if (user) {
-                        checkAdminStatus(user.uid);
+                        currentUser = user;
+                        checkUserRole(user.uid);
                     } else {
+                        currentUser = null;
                         showAuthContainer();
                     }
                 });
                 
-                console.log('Firebase erfolgreich initialisiert');
+                console.log('Firebase initialized successfully');
             } catch (error) {
-                console.error('Fehler beim Initialisieren von Firebase:', error);
-                alert('Fehler beim Laden der Anwendung. Bitte laden Sie die Seite neu.');
+                console.error('Firebase initialization error:', error);
+                showError('general', 'Fehler beim Laden der Anwendung. Bitte laden Sie die Seite neu.');
             }
         }
 
-        function showAuthContainer() {
-            document.getElementById('authContainer').style.display = 'block';
-            document.getElementById('appContainer').style.display = 'none';
-        }
-
-        function checkAdminStatus(uid) {
+        // User Role Management
+        function checkUserRole(uid) {
+            // First check if user is admin
             dbRef.child('admins').child(uid).once('value')
                 .then(snapshot => {
-                    isAdmin = snapshot.exists();
+                    if (snapshot.exists()) {
+                        userRole = 'admin';
+                    } else {
+                        // Check for other roles in users table
+                        return dbRef.child('users').child(uid).child('role').once('value');
+                    }
+                })
+                .then(snapshot => {
+                    if (snapshot && snapshot.exists()) {
+                        userRole = snapshot.val();
+                    }
                     showAppContainer();
                 })
                 .catch(error => {
-                    console.error('Fehler beim Prüfen des Admin-Status:', error);
-                    showAppContainer(); // Zeige App auch bei Fehler
+                    console.error('Error checking user role:', error);
+                    userRole = 'employee'; // Default to employee on error
+                    showAppContainer();
                 });
+        }
+
+        function hasPermission(action) {
+            const permissions = {
+                admin: ['all'],
+                manager: ['viewShifts', 'editShifts', 'viewReports'],
+                employee: ['viewShifts', 'viewOwnShifts']
+            };
+            
+            const userPermissions = permissions[userRole] || permissions.employee;
+            return userPermissions.includes('all') || userPermissions.includes(action);
+        }
+
+        // Auth Functions
+        function showAuthContainer() {
+            document.getElementById('authContainer').style.display = 'block';
+            document.getElementById('appContainer').style.display = 'none';
         }
 
         function showAppContainer() {
             document.getElementById('authContainer').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             
-            const userEmail = auth && auth.currentUser ? auth.currentUser.email : 'Unbekannt';
-            document.getElementById('userInfo').innerHTML = 
-                `${userEmail} <button class="btn btn-danger" onclick="logout()">Logout</button>`;
+            // Update UI based on role
+            updateUIForRole();
             
+            // Initialize data listeners
             initializeDataListeners();
-            initializeApp();
+            
+            // Initial render
+            renderAll();
+        }
+
+        function updateUIForRole() {
+            const userEmail = currentUser ? currentUser.email : 'Unknown';
+            document.getElementById('userEmail').textContent = userEmail;
+            document.getElementById('userRole').textContent = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+            
+            // Show/hide management sections based on role
+            const managementSections = document.getElementById('managementSections');
+            if (hasPermission('manageEmployees')) {
+                managementSections.style.display = 'block';
+            } else {
+                managementSections.style.display = 'none';
+            }
         }
 
         function toggleView() {
@@ -451,17 +1020,28 @@
                 registerView.style.display = 'block';
             }
             
-            // Fehlermeldungen zurücksetzen
+            // Clear errors
             hideError('loginError');
             hideError('registerError');
         }
 
-        function register() {
-            if (!auth) {
-                alert('Firebase ist noch nicht bereit. Bitte versuchen Sie es erneut.');
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showError('loginError', 'Bitte füllen Sie alle Felder aus.');
                 return;
             }
             
+            auth.signInWithEmailAndPassword(email, password)
+                .catch(error => {
+                    console.error('Login error:', error);
+                    showError('loginError', getErrorMessage(error));
+                });
+        }
+
+        function register() {
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
             
@@ -476,73 +1056,74 @@
             }
             
             auth.createUserWithEmailAndPassword(email, password)
+                .then(userCredential => {
+                    // Set default role for new users
+                    return dbRef.child('users').child(userCredential.user.uid).set({
+                        email: email,
+                        role: 'employee',
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+                })
                 .catch(error => {
-                    console.error('Registrierungsfehler:', error);
+                    console.error('Registration error:', error);
                     showError('registerError', getErrorMessage(error));
                 });
         }
 
-        function login() {
-            if (!auth) {
-                alert('Firebase ist noch nicht bereit. Bitte versuchen Sie es erneut.');
-                return;
-            }
-            
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                showError('loginError', 'Bitte füllen Sie alle Felder aus.');
-                return;
-            }
-            
-            auth.signInWithEmailAndPassword(email, password)
-                .catch(error => {
-                    console.error('Login-Fehler:', error);
-                    showError('loginError', getErrorMessage(error));
-                });
-        }
-
         function logout() {
-            if (auth) {
-                auth.signOut().catch(error => {
-                    console.error('Logout-Fehler:', error);
-                });
+            if (confirm('Möchten Sie sich wirklich abmelden?')) {
+                auth.signOut();
             }
         }
 
+        // Error Handling
         function showError(elementId, message) {
             const errorElement = document.getElementById(elementId);
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                setTimeout(() => hideError(elementId), 5000);
+            } else {
+                alert(message);
+            }
         }
 
         function hideError(elementId) {
             const errorElement = document.getElementById(elementId);
-            errorElement.style.display = 'none';
-        }
-
-        function getErrorMessage(error) {
-            switch (error.code) {
-                case 'auth/email-already-in-use':
-                    return 'Diese E-Mail-Adresse wird bereits verwendet.';
-                case 'auth/invalid-email':
-                    return 'Ungültige E-Mail-Adresse.';
-                case 'auth/weak-password':
-                    return 'Das Passwort ist zu schwach.';
-                case 'auth/user-not-found':
-                    return 'Benutzer nicht gefunden.';
-                case 'auth/wrong-password':
-                    return 'Falsches Passwort.';
-                default:
-                    return error.message;
+            if (errorElement) {
+                errorElement.style.display = 'none';
             }
         }
 
-        // Daten-Management
+        function showSuccess(message) {
+            // Create temporary success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        function getErrorMessage(error) {
+            const messages = {
+                'auth/email-already-in-use': 'Diese E-Mail-Adresse wird bereits verwendet.',
+                'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
+                'auth/weak-password': 'Das Passwort ist zu schwach.',
+                'auth/user-not-found': 'Benutzer nicht gefunden.',
+                'auth/wrong-password': 'Falsches Passwort.',
+                'auth/network-request-failed': 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.'
+            };
+            return messages[error.code] || error.message;
+        }
+
+        // Data Management
         function initializeDataListeners() {
             if (!scheduleRef) {
-                console.error('ScheduleRef ist nicht initialisiert');
+                console.error('ScheduleRef not initialized');
                 return;
             }
             
@@ -554,22 +1135,23 @@
                     shiftTypes = data.shiftTypes || [];
                     renderAll();
                 } catch (error) {
-                    console.error('Fehler beim Laden der Daten:', error);
+                    console.error('Error loading data:', error);
+                    showError('general', 'Fehler beim Laden der Daten.');
+                }
+            });
+            
+            // Connection state monitoring
+            database.ref('.info/connected').on('value', snapshot => {
+                if (snapshot.val() === false) {
+                    showError('general', 'Keine Verbindung zum Server. Änderungen werden gespeichert, sobald die Verbindung wiederhergestellt ist.');
                 }
             });
         }
 
-        function renderAll() {
-            updateWeekDisplay();
-            updateEmployeeList();
-            updateShiftTypeList();
-            renderSchedule();
-        }
-
-        // Mitarbeiter-Management
+        // Employee Management
         function addEmployee() {
-            if (!scheduleRef) {
-                alert('Datenbank ist noch nicht bereit. Bitte versuchen Sie es erneut.');
+            if (!hasPermission('manageEmployees')) {
+                showError('general', 'Sie haben keine Berechtigung für diese Aktion.');
                 return;
             }
             
@@ -577,33 +1159,40 @@
             const name = nameInput.value.trim();
             
             if (!name) {
-                alert('Bitte geben Sie einen Namen ein.');
+                showError('general', 'Bitte geben Sie einen Namen ein.');
                 return;
             }
             
             if (employees.includes(name)) {
-                alert('Dieser Mitarbeiter existiert bereits.');
+                showError('general', 'Dieser Mitarbeiter existiert bereits.');
                 return;
             }
             
             scheduleRef.child('employees').set([...employees, name])
                 .then(() => {
                     nameInput.value = '';
+                    showSuccess('Mitarbeiter erfolgreich hinzugefügt.');
                 })
                 .catch(error => {
-                    console.error('Fehler beim Hinzufügen des Mitarbeiters:', error);
-                    alert('Fehler beim Hinzufügen des Mitarbeiters.');
+                    console.error('Error adding employee:', error);
+                    showError('general', 'Fehler beim Hinzufügen des Mitarbeiters.');
                 });
         }
 
         function removeEmployee(nameToRemove) {
-            if (!scheduleRef) return;
+            if (!hasPermission('manageEmployees')) {
+                showError('general', 'Sie haben keine Berechtigung für diese Aktion.');
+                return;
+            }
             
-            if (confirm(`Mitarbeiter "${nameToRemove}" wirklich entfernen?`)) {
+            if (confirm(`Möchten Sie "${nameToRemove}" wirklich entfernen? Alle zugewiesenen Schichten bleiben erhalten.`)) {
                 scheduleRef.child('employees').set(employees.filter(emp => emp !== nameToRemove))
+                    .then(() => {
+                        showSuccess('Mitarbeiter erfolgreich entfernt.');
+                    })
                     .catch(error => {
-                        console.error('Fehler beim Entfernen des Mitarbeiters:', error);
-                        alert('Fehler beim Entfernen des Mitarbeiters.');
+                        console.error('Error removing employee:', error);
+                        showError('general', 'Fehler beim Entfernen des Mitarbeiters.');
                     });
             }
         }
@@ -614,16 +1203,37 @@
             
             container.innerHTML = employees.map(emp =>
                 `<div class="tag">
-                    ${escapeHtml(emp)}
-                    <button class="remove-tag" onclick="removeEmployee('${escapeHtml(emp)}')">×</button>
+                    <span>${escapeHtml(emp)}</span>
+                    ${hasPermission('manageEmployees') ? 
+                        `<button class="remove-tag" onclick="removeEmployee('${escapeHtml(emp)}')">×</button>` : 
+                        ''}
                 </div>`
             ).join('');
+            
+            // Update drag & drop list
+            updateDragEmployeeList();
         }
 
-        // Schichttypen-Management
+        function updateDragEmployeeList() {
+            const container = document.getElementById('dragEmployeeList');
+            if (!container) return;
+            
+            container.innerHTML = employees.map(emp =>
+                `<div class="employee-card" draggable="true" data-employee="${escapeHtml(emp)}">
+                    ${escapeHtml(emp)}
+                </div>`
+            ).join('');
+            
+            // Re-attach drag event listeners
+            if (dragDropMode) {
+                enableDragHandlers();
+            }
+        }
+
+        // Shift Type Management
         function addShiftType() {
-            if (!scheduleRef) {
-                alert('Datenbank ist noch nicht bereit. Bitte versuchen Sie es erneut.');
+            if (!hasPermission('manageEmployees')) {
+                showError('general', 'Sie haben keine Berechtigung für diese Aktion.');
                 return;
             }
             
@@ -631,33 +1241,40 @@
             const name = nameInput.value.trim();
             
             if (!name) {
-                alert('Bitte geben Sie einen Schichttyp ein.');
+                showError('general', 'Bitte geben Sie einen Schichttyp ein.');
                 return;
             }
             
             if (shiftTypes.includes(name)) {
-                alert('Dieser Schichttyp existiert bereits.');
+                showError('general', 'Dieser Schichttyp existiert bereits.');
                 return;
             }
             
             scheduleRef.child('shiftTypes').set([...shiftTypes, name])
                 .then(() => {
                     nameInput.value = '';
+                    showSuccess('Schichttyp erfolgreich hinzugefügt.');
                 })
                 .catch(error => {
-                    console.error('Fehler beim Hinzufügen des Schichttyps:', error);
-                    alert('Fehler beim Hinzufügen des Schichttyps.');
+                    console.error('Error adding shift type:', error);
+                    showError('general', 'Fehler beim Hinzufügen des Schichttyps.');
                 });
         }
 
         function removeShiftType(typeToRemove) {
-            if (!scheduleRef) return;
+            if (!hasPermission('manageEmployees')) {
+                showError('general', 'Sie haben keine Berechtigung für diese Aktion.');
+                return;
+            }
             
-            if (confirm(`Schicht-Typ "${typeToRemove}" wirklich entfernen?`)) {
+            if (confirm(`Möchten Sie den Schichttyp "${typeToRemove}" wirklich entfernen? Zugewiesene Schichten bleiben erhalten.`)) {
                 scheduleRef.child('shiftTypes').set(shiftTypes.filter(st => st !== typeToRemove))
+                    .then(() => {
+                        showSuccess('Schichttyp erfolgreich entfernt.');
+                    })
                     .catch(error => {
-                        console.error('Fehler beim Entfernen des Schichttyps:', error);
-                        alert('Fehler beim Entfernen des Schichttyps.');
+                        console.error('Error removing shift type:', error);
+                        showError('general', 'Fehler beim Entfernen des Schichttyps.');
                     });
             }
         }
@@ -668,13 +1285,15 @@
             
             container.innerHTML = shiftTypes.map(st =>
                 `<div class="tag">
-                    ${escapeHtml(st)}
-                    <button class="remove-tag" onclick="removeShiftType('${escapeHtml(st)}')">×</button>
+                    <span>${escapeHtml(st)}</span>
+                    ${hasPermission('manageEmployees') ? 
+                        `<button class="remove-tag" onclick="removeShiftType('${escapeHtml(st)}')">×</button>` : 
+                        ''}
                 </div>`
             ).join('');
         }
 
-        // Wochenplan-Funktionen
+        // Week Navigation
         function getWeekDates(offset = 0) {
             const today = new Date();
             const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
@@ -683,7 +1302,457 @@
             
             const dates = [];
             for (let i = 0; i < 7; i++) {
-                const date = new Date(monday);
+                const date = new Date(e.currentTarget.dataset.date);
+            const shiftType = e.currentTarget.dataset.shiftType;
+            
+            if (!hasPermission('editShifts')) {
+                showError('general', 'Sie haben keine Berechtigung, Schichten zu bearbeiten.');
+                return;
+            }
+            
+            // Quick assign without modal
+            quickAssignShift(date, shiftType, draggedEmployee);
+            draggedEmployee = null;
+        }
+
+        function quickAssignShift(date, shiftType, employee) {
+            const shiftKey = getShiftKey(date, shiftType);
+            const currentShifts = shifts[shiftKey] || [];
+            
+            // Check if already assigned
+            if (currentShifts.some(s => s.employee === employee)) {
+                showError('general', `${employee} ist bereits für diese Schicht eingeteilt.`);
+                return;
+            }
+            
+            const newShift = { employee, note: '' };
+            
+            scheduleRef.child('shifts').child(shiftKey).set([...currentShifts, newShift])
+                .then(() => {
+                    showSuccess(`${employee} wurde der Schicht zugewiesen.`);
+                })
+                .catch(error => {
+                    console.error('Error assigning shift:', error);
+                    showError('general', 'Fehler beim Zuweisen der Schicht.');
+                });
+        }
+
+        // Modal Functions
+        function openModal(date, shiftType) {
+            if (!hasPermission('editShifts')) {
+                showError('general', 'Sie haben keine Berechtigung, Schichten zu bearbeiten.');
+                return;
+            }
+            
+            if (employees.length === 0) {
+                showError('general', 'Bitte fügen Sie zuerst Mitarbeiter hinzu.');
+                return;
+            }
+            
+            currentModalSlot = { date: new Date(date), shiftType };
+            
+            // Update modal info
+            document.getElementById('modalShiftType').textContent = shiftType;
+            document.getElementById('modalShiftDate').textContent = formatDateLong(currentModalSlot.date);
+            
+            const modal = document.getElementById('shiftModal');
+            modal.style.display = 'flex';
+            updateModalEmployeeSelect();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('shiftModal');
+            modal.style.display = 'none';
+            document.getElementById('modalNote').value = '';
+            currentModalSlot = null;
+        }
+
+        function updateModalEmployeeSelect() {
+            const select = document.getElementById('modalEmployee');
+            if (!select) return;
+            
+            // Get already assigned employees for this shift
+            const shiftKey = getShiftKey(currentModalSlot.date, currentModalSlot.shiftType);
+            const assignedEmployees = (shifts[shiftKey] || []).map(s => s.employee);
+            
+            // Filter out already assigned employees
+            const availableEmployees = employees.filter(emp => !assignedEmployees.includes(emp));
+            
+            if (availableEmployees.length > 0) {
+                select.innerHTML = '<option value="">-- Bitte wählen --</option>' + 
+                    availableEmployees.map(emp => 
+                        `<option value="${escapeHtml(emp)}">${escapeHtml(emp)}</option>`
+                    ).join('');
+            } else {
+                select.innerHTML = '<option value="">Alle Mitarbeiter sind bereits zugewiesen</option>';
+            }
+        }
+
+        function saveShift() {
+            if (!currentModalSlot || !scheduleRef) return;
+            
+            const employeeSelect = document.getElementById('modalEmployee');
+            const noteField = document.getElementById('modalNote');
+            const saveButton = document.querySelector('#shiftModal .btn-primary');
+            const loading = document.getElementById('saveLoading');
+            
+            const employee = employeeSelect.value;
+            const note = noteField.value.trim();
+            
+            if (!employee) {
+                showError('general', 'Bitte wählen Sie einen Mitarbeiter aus.');
+                return;
+            }
+            
+            // Show loading state
+            loading.style.display = 'inline-block';
+            saveButton.disabled = true;
+            
+            const shiftKey = getShiftKey(currentModalSlot.date, currentModalSlot.shiftType);
+            const newShift = { employee, note };
+            const currentShifts = shifts[shiftKey] || [];
+            
+            scheduleRef.child('shifts').child(shiftKey).set([...currentShifts, newShift])
+                .then(() => {
+                    closeModal();
+                    showSuccess('Schicht erfolgreich zugewiesen.');
+                })
+                .catch(error => {
+                    console.error('Error saving shift:', error);
+                    showError('general', 'Fehler beim Speichern der Schicht.');
+                })
+                .finally(() => {
+                    loading.style.display = 'none';
+                    saveButton.disabled = false;
+                });
+        }
+
+        function removeShift(dateStr, shiftType, employeeToRemove) {
+            if (!hasPermission('editShifts')) {
+                showError('general', 'Sie haben keine Berechtigung, Schichten zu bearbeiten.');
+                return;
+            }
+            
+            if (!confirm(`Schicht für ${employeeToRemove} wirklich entfernen?`)) {
+                return;
+            }
+            
+            const date = new Date(dateStr);
+            const shiftKey = getShiftKey(date, shiftType);
+            
+            if (shifts[shiftKey]) {
+                const updatedShifts = shifts[shiftKey].filter(s => s.employee !== employeeToRemove);
+                
+                if (updatedShifts.length > 0) {
+                    scheduleRef.child('shifts').child(shiftKey).set(updatedShifts)
+                        .then(() => {
+                            showSuccess('Schicht erfolgreich entfernt.');
+                        })
+                        .catch(error => {
+                            console.error('Error removing shift:', error);
+                            showError('general', 'Fehler beim Entfernen der Schicht.');
+                        });
+                } else {
+                    scheduleRef.child('shifts').child(shiftKey).remove()
+                        .then(() => {
+                            showSuccess('Schicht erfolgreich entfernt.');
+                        })
+                        .catch(error => {
+                            console.error('Error removing shift:', error);
+                            showError('general', 'Fehler beim Entfernen der Schicht.');
+                        });
+                }
+            }
+        }
+
+        // Rendering Functions
+        function renderAll() {
+            updateWeekDisplay();
+            updateEmployeeList();
+            updateShiftTypeList();
+            updateStatistics();
+            renderSchedule();
+        }
+
+        function renderSchedule() {
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                renderMobileSchedule();
+            } else {
+                renderDesktopSchedule();
+            }
+        }
+
+        function renderDesktopSchedule() {
+            const grid = document.getElementById('scheduleGrid');
+            const mobileSchedule = document.getElementById('mobileSchedule');
+            
+            if (!grid) return;
+            
+            grid.style.display = 'grid';
+            mobileSchedule.style.display = 'none';
+            
+            const weekDates = getWeekDates(currentWeekOffset);
+            
+            let html = '<div class="grid-header shift-type-header">Schicht-Typ</div>';
+            
+            // Day headers
+            weekDates.forEach(date => {
+                const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+                const isToday = isDateToday(date);
+                html += `<div class="grid-header day-header" ${isToday ? 'style="background: var(--secondary);"' : ''}>
+                    <div>${dayNames[dayIndex]}</div>
+                    <div class="date">${formatDate(date)}</div>
+                </div>`;
+            });
+            
+            // Shift rows
+            shiftTypes.forEach(shiftType => {
+                html += `<div class="grid-header shift-type-header">
+                    <span>${escapeHtml(shiftType)}</span>
+                </div>`;
+                
+                weekDates.forEach(date => {
+                    const shiftKey = getShiftKey(date, shiftType);
+                    const assignedShifts = shifts[shiftKey] || [];
+                    const isToday = isDateToday(date);
+                    
+                    let shiftsHtml = '';
+                    assignedShifts.forEach(shift => {
+                        shiftsHtml += `
+                            <div class="shift-entry" draggable="${dragDropMode}" data-employee="${escapeHtml(shift.employee)}">
+                                <div class="shift-details">
+                                    <div class="employee-name">${escapeHtml(shift.employee)}</div>
+                                    ${shift.note ? `<div class="shift-note">${escapeHtml(shift.note)}</div>` : ''}
+                                </div>
+                                ${hasPermission('editShifts') ? 
+                                    `<button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${escapeHtml(shiftType)}', '${escapeHtml(shift.employee)}')">×</button>` : 
+                                    ''}
+                            </div>`;
+                    });
+                    
+                    const addBtnHtml = hasPermission('editShifts') ? 
+                        `<button class="add-shift-btn" onclick="openModal('${date.toISOString()}', '${escapeHtml(shiftType)}')">
+                            + Mitarbeiter zuweisen
+                        </button>` : '';
+                    
+                    html += `<div class="shift-cell" 
+                        data-date="${date.toISOString()}" 
+                        data-shift-type="${escapeHtml(shiftType)}"
+                        ${isToday ? 'style="border-color: var(--secondary);"' : ''}>
+                        <div>${shiftsHtml}</div>
+                        ${addBtnHtml}
+                    </div>`;
+                });
+            });
+            
+            grid.innerHTML = html;
+            
+            // Re-enable drag handlers if in drag mode
+            if (dragDropMode) {
+                enableDragHandlers();
+            }
+        }
+
+        function renderMobileSchedule() {
+            const grid = document.getElementById('scheduleGrid');
+            const mobileSchedule = document.getElementById('mobileSchedule');
+            
+            if (!mobileSchedule) return;
+            
+            grid.style.display = 'none';
+            mobileSchedule.style.display = 'block';
+            
+            const weekDates = getWeekDates(currentWeekOffset);
+            let html = '';
+            
+            weekDates.forEach(date => {
+                const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+                const isToday = isDateToday(date);
+                
+                html += `<div class="day-schedule" ${isToday ? 'style="border: 2px solid var(--secondary);"' : ''}>
+                    <h3>${dayNames[dayIndex]}, ${formatDate(date)}</h3>`;
+                
+                shiftTypes.forEach(shiftType => {
+                    const shiftKey = getShiftKey(date, shiftType);
+                    const assignedShifts = shifts[shiftKey] || [];
+                    
+                    html += `<div class="shift-type-section">
+                        <h4>${escapeHtml(shiftType)}</h4>`;
+                    
+                    assignedShifts.forEach(shift => {
+                        html += `
+                            <div class="shift-entry">
+                                <div class="shift-details">
+                                    <div class="employee-name">${escapeHtml(shift.employee)}</div>
+                                    ${shift.note ? `<div class="shift-note">${escapeHtml(shift.note)}</div>` : ''}
+                                </div>
+                                ${hasPermission('editShifts') ? 
+                                    `<button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${escapeHtml(shiftType)}', '${escapeHtml(shift.employee)}')">×</button>` : 
+                                    ''}
+                            </div>`;
+                    });
+                    
+                    if (hasPermission('editShifts')) {
+                        html += `<button class="add-shift-btn" onclick="openModal('${date.toISOString()}', '${escapeHtml(shiftType)}')">
+                            + Mitarbeiter zuweisen
+                        </button>`;
+                    }
+                    
+                    html += `</div>`;
+                });
+                
+                html += `</div>`;
+            });
+            
+            mobileSchedule.innerHTML = html;
+            
+            // Show mobile FAB
+            const fab = document.querySelector('.mobile-fab');
+            if (fab && hasPermission('editShifts')) {
+                fab.style.display = 'flex';
+            }
+        }
+
+        function isDateToday(date) {
+            const today = new Date();
+            return date.toDateString() === today.toDateString();
+        }
+
+        // Export Functions
+        function printSchedule() {
+            window.print();
+        }
+
+        function exportSchedule() {
+            const weekDates = getWeekDates(currentWeekOffset);
+            const startDate = formatDate(weekDates[0]);
+            const endDate = formatDate(weekDates[6]);
+            const weekNumber = getWeekNumber(weekDates[0]);
+            
+            let csv = `Landhaus Fillert - Schichtplan KW ${weekNumber} (${startDate} - ${endDate})\n\n`;
+            csv += 'Tag,Datum,Schicht,Mitarbeiter,Notiz\n';
+            
+            weekDates.forEach(date => {
+                const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+                const dayName = dayNames[dayIndex];
+                const dateStr = formatDate(date);
+                
+                shiftTypes.forEach(shiftType => {
+                    const shiftKey = getShiftKey(date, shiftType);
+                    const assignedShifts = shifts[shiftKey] || [];
+                    
+                    if (assignedShifts.length === 0) {
+                        csv += `${dayName},${dateStr},${shiftType},-,-\n`;
+                    } else {
+                        assignedShifts.forEach(shift => {
+                            csv += `${dayName},${dateStr},${shiftType},${shift.employee},${shift.note || '-'}\n`;
+                        });
+                    }
+                });
+            });
+            
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `schichtplan_kw${weekNumber}_${startDate.replace(/\./g, '-')}.csv`;
+            link.click();
+            
+            showSuccess('Schichtplan wurde exportiert.');
+        }
+
+        // Utility Functions
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showMobileAddMenu() {
+            // Simple implementation - could be enhanced with a mobile-specific menu
+            const firstShift = shiftTypes[0];
+            const today = getWeekDates(currentWeekOffset)[0];
+            if (firstShift) {
+                openModal(today.toISOString(), firstShift);
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Firebase
+            initializeFirebase();
+            
+            // Auth form handlers
+            ['loginEmail', 'loginPassword'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') login();
+                });
+            });
+            
+            ['registerEmail', 'registerPassword'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') register();
+                });
+            });
+            
+            // Input handlers
+            document.getElementById('newEmployeeName').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addEmployee();
+            });
+            
+            document.getElementById('newShiftTypeName').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addShiftType();
+            });
+            
+            // Modal handlers
+            document.getElementById('shiftModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('shiftModal')) {
+                    closeModal();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // ESC to close modal
+                if (e.key === 'Escape' && document.getElementById('shiftModal').style.display === 'flex') {
+                    closeModal();
+                }
+                
+                // Ctrl+P to print
+                if (e.ctrlKey && e.key === 'p') {
+                    e.preventDefault();
+                    printSchedule();
+                }
+                
+                // Ctrl+E to export
+                if (e.ctrlKey && e.key === 'e') {
+                    e.preventDefault();
+                    exportSchedule();
+                }
+            });
+            
+            // Window resize handler
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    renderSchedule();
+                }, 250);
+            });
+        });
+
+        // Offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(err => {
+                console.log('Service Worker registration failed:', err);
+            });
+        }
+    </script>
+</body>
+</html> new Date(monday);
                 date.setDate(monday.getDate() + i);
                 dates.push(date);
             }
@@ -702,6 +1771,10 @@
             return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
         }
 
+        function formatDateLong(date) {
+            return date.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+        }
+
         function getShiftKey(date, shiftType) {
             const safeShiftType = shiftType.replace(/[.$#[\]/]/g, '_');
             return `${date.toISOString().split('T')[0]}__${safeShiftType}`;
@@ -709,6 +1782,11 @@
 
         function changeWeek(direction) {
             currentWeekOffset += direction;
+            renderAll();
+        }
+
+        function goToToday() {
+            currentWeekOffset = 0;
             renderAll();
         }
 
@@ -723,232 +1801,553 @@
             }
         }
 
-        // Modal-Funktionen
-        function openModal(date, shiftType) {
-            if (employees.length === 0) {
-                alert('Bitte fügen Sie zuerst Mitarbeiter hinzu.');
-                return;
-            }
+        // Statistics
+        function updateStatistics() {
+            // Total employees
+            document.getElementById('totalEmployees').textContent = employees.length;
             
-            currentModalSlot = { date: new Date(date), shiftType };
-            const modal = document.getElementById('shiftModal');
-            if (modal) {
-                modal.style.display = 'flex';
-                updateModalEmployeeSelect();
-            }
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('shiftModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
+            // Total shift types
+            document.getElementById('totalShiftTypes').textContent = shiftTypes.length;
             
-            const noteField = document.getElementById('modalNote');
-            if (noteField) {
-                noteField.value = '';
-            }
-            
-            currentModalSlot = null;
-        }
-
-        function updateModalEmployeeSelect() {
-            const select = document.getElementById('modalEmployee');
-            if (!select) return;
-            
-            if (employees.length > 0) {
-                select.innerHTML = employees.map(emp => 
-                    `<option value="${escapeHtml(emp)}">${escapeHtml(emp)}</option>`
-                ).join('');
-            } else {
-                select.innerHTML = '<option disabled>Bitte zuerst Mitarbeiter anlegen</option>';
-            }
-        }
-
-        function saveShift() {
-            if (!currentModalSlot || !scheduleRef) return;
-            
-            const employeeSelect = document.getElementById('modalEmployee');
-            const noteField = document.getElementById('modalNote');
-            
-            if (!employeeSelect || !noteField) return;
-            
-            const employee = employeeSelect.value;
-            const note = noteField.value.trim();
-            
-            if (!employee) {
-                alert('Bitte wählen Sie einen Mitarbeiter aus.');
-                return;
-            }
-            
-            const shiftKey = getShiftKey(currentModalSlot.date, currentModalSlot.shiftType);
-            const newShift = { employee, note };
-            const currentShifts = shifts[shiftKey] || [];
-            
-            if (currentShifts.some(s => s.employee === employee)) {
-                alert(`${employee} ist bereits für diese Schicht eingeteilt.`);
-                return;
-            }
-            
-            scheduleRef.child('shifts').child(shiftKey).set([...currentShifts, newShift])
-                .then(() => {
-                    closeModal();
-                })
-                .catch(error => {
-                    console.error('Fehler beim Speichern der Schicht:', error);
-                    alert('Fehler beim Speichern der Schicht.');
-                });
-        }
-
-        function removeShift(dateStr, shiftType, employeeToRemove) {
-            if (!scheduleRef) return;
-            
-            if (!confirm(`Schicht für ${employeeToRemove} wirklich entfernen?`)) {
-                return;
-            }
-            
-            const date = new Date(dateStr);
-            const shiftKey = getShiftKey(date, shiftType);
-            
-            if (shifts[shiftKey]) {
-                const updatedShifts = shifts[shiftKey].filter(s => s.employee !== employeeToRemove);
-                
-                if (updatedShifts.length > 0) {
-                    scheduleRef.child('shifts').child(shiftKey).set(updatedShifts)
-                        .catch(error => {
-                            console.error('Fehler beim Entfernen der Schicht:', error);
-                            alert('Fehler beim Entfernen der Schicht.');
-                        });
-                } else {
-                    scheduleRef.child('shifts').child(shiftKey).remove()
-                        .catch(error => {
-                            console.error('Fehler beim Entfernen der Schicht:', error);
-                            alert('Fehler beim Entfernen der Schicht.');
-                        });
-                }
-            }
-        }
-
-        // Schichtplan rendern
-        function renderSchedule() {
-            const grid = document.getElementById('scheduleGrid');
-            if (!grid) return;
-            
+            // Week shifts and open shifts
             const weekDates = getWeekDates(currentWeekOffset);
+            let weekShiftCount = 0;
+            let openShiftCount = 0;
             
-            let html = '<div class="grid-header shift-type-header">Schicht</div>';
-            
-            // Wochentage-Header
             weekDates.forEach(date => {
-                const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
-                html += `<div class="grid-header day-header">
-                    ${dayNames[dayIndex]}<br>
-                    <div>${formatDate(date)}</div>
-                </div>`;
-            });
-            
-            // Schichtplan-Grid
-            shiftTypes.forEach(shiftType => {
-                html += `<div class="grid-header shift-type-header">${escapeHtml(shiftType)}</div>`;
-                
-                weekDates.forEach(date => {
+                shiftTypes.forEach(shiftType => {
                     const shiftKey = getShiftKey(date, shiftType);
                     const assignedShifts = shifts[shiftKey] || [];
+                    weekShiftCount += assignedShifts.length;
                     
-                    let shiftsHtml = '';
-                    assignedShifts.forEach(shift => {
-                        shiftsHtml += `
-                            <div class="shift-entry">
-                                <div class="shift-details">
-                                    <div class="employee-name">${escapeHtml(shift.employee)}</div>
-                                    ${shift.note ? `<div class="shift-note">${escapeHtml(shift.note)}</div>` : ''}
-                                </div>
-                                <button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${escapeHtml(shiftType)}', '${escapeHtml(shift.employee)}')">×</button>
-                            </div>`;
-                    });
-                    
-                    const addBtnHtml = `<button class="add-shift-btn" onclick="openModal('${date.toISOString()}', '${escapeHtml(shiftType)}')">+ Zuweisen</button>`;
-                    
-                    html += `<div class="shift-cell">
-                        <div>${shiftsHtml}</div>
-                        ${addBtnHtml}
-                    </div>`;
-                });
-            });
-            
-            grid.innerHTML = html;
-        }
-
-        // Hilfsfunktionen
-        function escapeHtml(text) {
-            if (typeof text !== 'string') return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            // Firebase initialisieren wenn DOM geladen ist
-            initializeFirebase();
-            // Enter-Taste für Login
-            document.getElementById('loginEmail').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') login();
-            });
-            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') login();
-            });
-            
-            // Enter-Taste für Registrierung
-            document.getElementById('registerEmail').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') register();
-            });
-            document.getElementById('registerPassword').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') register();
-            });
-            
-            // Enter-Taste für Mitarbeiter hinzufügen
-            document.getElementById('newEmployeeName').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addEmployee();
-            });
-            
-            // Enter-Taste für Schichttyp hinzufügen
-            document.getElementById('newShiftTypeName').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addShiftType();
-            });
-            
-            // Modal schließen beim Klick außerhalb
-            document.getElementById('shiftModal').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('shiftModal')) {
-                    closeModal();
-                }
-            });
-            
-            // ESC-Taste zum Schließen des Modals
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && document.getElementById('shiftModal').style.display === 'flex') {
-                    closeModal();
-                }
-            });
-        });
-
-        // Fehlerbehandlung für Firebase-Verbindung
-        function setupFirebaseConnectionMonitoring() {
-            if (database) {
-                database.ref('.info/connected').on('value', (snapshot) => {
-                    if (snapshot.val() === true) {
-                        console.log('Mit Firebase verbunden');
-                    } else {
-                        console.log('Verbindung zu Firebase verloren');
+                    // Assume we need at least 1 person per shift
+                    if (assignedShifts.length === 0) {
+                        openShiftCount++;
                     }
                 });
+            });
+            
+            document.getElementById('weekShifts').textContent = weekShiftCount;
+            document.getElementById('openShifts').textContent = openShiftCount;
+        }
+
+        // Drag & Drop
+        function toggleDragDropMode() {
+            dragDropMode = !dragDropMode;
+            const sidebar = document.getElementById('employeeSidebar');
+            
+            if (dragDropMode) {
+                sidebar.style.display = 'block';
+                enableDragHandlers();
+                showSuccess('Drag & Drop Modus aktiviert. Ziehen Sie Mitarbeiter auf die Schichten.');
+            } else {
+                sidebar.style.display = 'none';
+                disableDragHandlers();
             }
         }
 
-        // Firebase Connection Monitoring nach Initialisierung einrichten
-        function initializeApp() {
-            setupFirebaseConnectionMonitoring();
+        function enableDragHandlers() {
+            // Employee cards
+            document.querySelectorAll('.employee-card').forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+            });
+            
+            // Shift cells
+            document.querySelectorAll('.shift-cell').forEach(cell => {
+                cell.addEventListener('dragover', handleDragOver);
+                cell.addEventListener('dragleave', handleDragLeave);
+                cell.addEventListener('drop', handleDrop);
+            });
         }
-    </script>
+
+        function disableDragHandlers() {
+            document.querySelectorAll('.employee-card').forEach(card => {
+                card.removeEventListener('dragstart', handleDragStart);
+                card.removeEventListener('dragend', handleDragEnd);
+            });
+            
+            document.querySelectorAll('.shift-cell').forEach(cell => {
+                cell.removeEventListener('dragover', handleDragOver);
+                cell.removeEventListener('dragleave', handleDragLeave);
+                cell.removeEventListener('drop', handleDrop);
+            });
+        }
+
+        let draggedEmployee = null;
+
+        function handleDragStart(e) {
+            draggedEmployee = e.target.dataset.employee;
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (!draggedEmployee) return;
+            
+            const date = new Date(e.currentTarget.dataset.date);
+           const shiftType = e.currentTarget.dataset.shiftType;
+           
+           if (!hasPermission('editShifts')) {
+               showError('general', 'Sie haben keine Berechtigung, Schichten zu bearbeiten.');
+               return;
+           }
+           
+           // Quick assign without modal
+           quickAssignShift(date, shiftType, draggedEmployee);
+           draggedEmployee = null;
+       }
+
+       function quickAssignShift(date, shiftType, employee) {
+           const shiftKey = getShiftKey(date, shiftType);
+           const currentShifts = shifts[shiftKey] || [];
+           
+           // Check if already assigned
+           if (currentShifts.some(s => s.employee === employee)) {
+               showError('general', `${employee} ist bereits für diese Schicht eingeteilt.`);
+               return;
+           }
+           
+           const newShift = { employee, note: '' };
+           
+           scheduleRef.child('shifts').child(shiftKey).set([...currentShifts, newShift])
+               .then(() => {
+                   showSuccess(`${employee} wurde der Schicht zugewiesen.`);
+               })
+               .catch(error => {
+                   console.error('Error assigning shift:', error);
+                   showError('general', 'Fehler beim Zuweisen der Schicht.');
+               });
+       }
+
+       // Modal Functions
+       function openModal(date, shiftType) {
+           if (!hasPermission('editShifts')) {
+               showError('general', 'Sie haben keine Berechtigung, Schichten zu bearbeiten.');
+               return;
+           }
+           
+           if (employees.length === 0) {
+               showError('general', 'Bitte fügen Sie zuerst Mitarbeiter hinzu.');
+               return;
+           }
+           
+           currentModalSlot = { date: new Date(date), shiftType };
+           
+           // Update modal info
+           document.getElementById('modalShiftType').textContent = shiftType;
+           document.getElementById('modalShiftDate').textContent = formatDateLong(currentModalSlot.date);
+           
+           const modal = document.getElementById('shiftModal');
+           modal.style.display = 'flex';
+           updateModalEmployeeSelect();
+       }
+
+       function closeModal() {
+           const modal = document.getElementById('shiftModal');
+           modal.style.display = 'none';
+           document.getElementById('modalNote').value = '';
+           currentModalSlot = null;
+       }
+
+       function updateModalEmployeeSelect() {
+           const select = document.getElementById('modalEmployee');
+           if (!select) return;
+           
+           // Get already assigned employees for this shift
+           const shiftKey = getShiftKey(currentModalSlot.date, currentModalSlot.shiftType);
+           const assignedEmployees = (shifts[shiftKey] || []).map(s => s.employee);
+           
+           // Filter out already assigned employees
+           const availableEmployees = employees.filter(emp => !assignedEmployees.includes(emp));
+           
+           if (availableEmployees.length > 0) {
+               select.innerHTML = '<option value="">-- Bitte wählen --</option>' + 
+                   availableEmployees.map(emp => 
+                       `<option value="${escapeHtml(emp)}">${escapeHtml(emp)}</option>`
+                   ).join('');
+           } else {
+               select.innerHTML = '<option value="">Alle Mitarbeiter sind bereits zugewiesen</option>';
+           }
+       }
+
+       function saveShift() {
+           if (!currentModalSlot || !scheduleRef) return;
+           
+           const employeeSelect = document.getElementById('modalEmployee');
+           const noteField = document.getElementById('modalNote');
+           const saveButton = document.querySelector('#shiftModal .btn-primary');
+           const loading = document.getElementById('saveLoading');
+           
+           const employee = employeeSelect.value;
+           const note = noteField.value.trim();
+           
+           if (!employee) {
+               showError('general', 'Bitte wählen Sie einen Mitarbeiter aus.');
+               return;
+           }
+           
+           // Show loading state
+           loading.style.display = 'inline-block';
+           saveButton.disabled = true;
+           
+           const shiftKey = getShiftKey(currentModalSlot.date, currentModalSlot.shiftType);
+           const newShift = { employee, note };
+           const currentShifts = shifts[shiftKey] || [];
+           
+           scheduleRef.child('shifts').child(shiftKey).set([...currentShifts, newShift])
+               .then(() => {
+                   closeModal();
+                   showSuccess('Schicht erfolgreich zugewiesen.');
+               })
+               .catch(error => {
+                   console.error('Error saving shift:', error);
+                   showError('general', 'Fehler beim Speichern der Schicht.');
+               })
+               .finally(() => {
+                   loading.style.display = 'none';
+                   saveButton.disabled = false;
+               });
+       }
+
+       function removeShift(dateStr, shiftType, employeeToRemove) {
+           if (!hasPermission('editShifts')) {
+               showError('general', 'Sie haben keine Berechtigung, Schichten zu bearbeiten.');
+               return;
+           }
+           
+           if (!confirm(`Schicht für ${employeeToRemove} wirklich entfernen?`)) {
+               return;
+           }
+           
+           const date = new Date(dateStr);
+           const shiftKey = getShiftKey(date, shiftType);
+           
+           if (shifts[shiftKey]) {
+               const updatedShifts = shifts[shiftKey].filter(s => s.employee !== employeeToRemove);
+               
+               if (updatedShifts.length > 0) {
+                   scheduleRef.child('shifts').child(shiftKey).set(updatedShifts)
+                       .then(() => {
+                           showSuccess('Schicht erfolgreich entfernt.');
+                       })
+                       .catch(error => {
+                           console.error('Error removing shift:', error);
+                           showError('general', 'Fehler beim Entfernen der Schicht.');
+                       });
+               } else {
+                   scheduleRef.child('shifts').child(shiftKey).remove()
+                       .then(() => {
+                           showSuccess('Schicht erfolgreich entfernt.');
+                       })
+                       .catch(error => {
+                           console.error('Error removing shift:', error);
+                           showError('general', 'Fehler beim Entfernen der Schicht.');
+                       });
+               }
+           }
+       }
+
+       // Rendering Functions
+       function renderAll() {
+           updateWeekDisplay();
+           updateEmployeeList();
+           updateShiftTypeList();
+           updateStatistics();
+           renderSchedule();
+       }
+
+       function renderSchedule() {
+           const isMobile = window.innerWidth <= 768;
+           
+           if (isMobile) {
+               renderMobileSchedule();
+           } else {
+               renderDesktopSchedule();
+           }
+       }
+
+       function renderDesktopSchedule() {
+           const grid = document.getElementById('scheduleGrid');
+           const mobileSchedule = document.getElementById('mobileSchedule');
+           
+           if (!grid) return;
+           
+           grid.style.display = 'grid';
+           mobileSchedule.style.display = 'none';
+           
+           const weekDates = getWeekDates(currentWeekOffset);
+           
+           let html = '<div class="grid-header shift-type-header">Schicht-Typ</div>';
+           
+           // Day headers
+           weekDates.forEach(date => {
+               const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+               const isToday = isDateToday(date);
+               html += `<div class="grid-header day-header" ${isToday ? 'style="background: var(--secondary);"' : ''}>
+                   <div>${dayNames[dayIndex]}</div>
+                   <div class="date">${formatDate(date)}</div>
+               </div>`;
+           });
+           
+           // Shift rows
+           shiftTypes.forEach(shiftType => {
+               html += `<div class="grid-header shift-type-header">
+                   <span>${escapeHtml(shiftType)}</span>
+               </div>`;
+               
+               weekDates.forEach(date => {
+                   const shiftKey = getShiftKey(date, shiftType);
+                   const assignedShifts = shifts[shiftKey] || [];
+                   const isToday = isDateToday(date);
+                   
+                   let shiftsHtml = '';
+                   assignedShifts.forEach(shift => {
+                       shiftsHtml += `
+                           <div class="shift-entry" draggable="${dragDropMode}" data-employee="${escapeHtml(shift.employee)}">
+                               <div class="shift-details">
+                                   <div class="employee-name">${escapeHtml(shift.employee)}</div>
+                                   ${shift.note ? `<div class="shift-note">${escapeHtml(shift.note)}</div>` : ''}
+                               </div>
+                               ${hasPermission('editShifts') ? 
+                                   `<button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${escapeHtml(shiftType)}', '${escapeHtml(shift.employee)}')">×</button>` : 
+                                   ''}
+                           </div>`;
+                   });
+                   
+                   const addBtnHtml = hasPermission('editShifts') ? 
+                       `<button class="add-shift-btn" onclick="openModal('${date.toISOString()}', '${escapeHtml(shiftType)}')">
+                           + Mitarbeiter zuweisen
+                       </button>` : '';
+                   
+                   html += `<div class="shift-cell" 
+                       data-date="${date.toISOString()}" 
+                       data-shift-type="${escapeHtml(shiftType)}"
+                       ${isToday ? 'style="border-color: var(--secondary);"' : ''}>
+                       <div>${shiftsHtml}</div>
+                       ${addBtnHtml}
+                   </div>`;
+               });
+           });
+           
+           grid.innerHTML = html;
+           
+           // Re-enable drag handlers if in drag mode
+           if (dragDropMode) {
+               enableDragHandlers();
+           }
+       }
+
+       function renderMobileSchedule() {
+           const grid = document.getElementById('scheduleGrid');
+           const mobileSchedule = document.getElementById('mobileSchedule');
+           
+           if (!mobileSchedule) return;
+           
+           grid.style.display = 'none';
+           mobileSchedule.style.display = 'block';
+           
+           const weekDates = getWeekDates(currentWeekOffset);
+           let html = '';
+           
+           weekDates.forEach(date => {
+               const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+               const isToday = isDateToday(date);
+               
+               html += `<div class="day-schedule" ${isToday ? 'style="border: 2px solid var(--secondary);"' : ''}>
+                   <h3>${dayNames[dayIndex]}, ${formatDate(date)}</h3>`;
+               
+               shiftTypes.forEach(shiftType => {
+                   const shiftKey = getShiftKey(date, shiftType);
+                   const assignedShifts = shifts[shiftKey] || [];
+                   
+                   html += `<div class="shift-type-section">
+                       <h4>${escapeHtml(shiftType)}</h4>`;
+                   
+                   assignedShifts.forEach(shift => {
+                       html += `
+                           <div class="shift-entry">
+                               <div class="shift-details">
+                                   <div class="employee-name">${escapeHtml(shift.employee)}</div>
+                                   ${shift.note ? `<div class="shift-note">${escapeHtml(shift.note)}</div>` : ''}
+                               </div>
+                               ${hasPermission('editShifts') ? 
+                                   `<button class="remove-shift" onclick="removeShift('${date.toISOString()}', '${escapeHtml(shiftType)}', '${escapeHtml(shift.employee)}')">×</button>` : 
+                                   ''}
+                           </div>`;
+                   });
+                   
+                   if (hasPermission('editShifts')) {
+                       html += `<button class="add-shift-btn" onclick="openModal('${date.toISOString()}', '${escapeHtml(shiftType)}')">
+                           + Mitarbeiter zuweisen
+                       </button>`;
+                   }
+                   
+                   html += `</div>`;
+               });
+               
+               html += `</div>`;
+           });
+           
+           mobileSchedule.innerHTML = html;
+           
+           // Show mobile FAB
+           const fab = document.querySelector('.mobile-fab');
+           if (fab && hasPermission('editShifts')) {
+               fab.style.display = 'flex';
+           }
+       }
+
+       function isDateToday(date) {
+           const today = new Date();
+           return date.toDateString() === today.toDateString();
+       }
+
+       // Export Functions
+       function printSchedule() {
+           window.print();
+       }
+
+       function exportSchedule() {
+           const weekDates = getWeekDates(currentWeekOffset);
+           const startDate = formatDate(weekDates[0]);
+           const endDate = formatDate(weekDates[6]);
+           const weekNumber = getWeekNumber(weekDates[0]);
+           
+           let csv = `Landhaus Fillert - Schichtplan KW ${weekNumber} (${startDate} - ${endDate})\n\n`;
+           csv += 'Tag,Datum,Schicht,Mitarbeiter,Notiz\n';
+           
+           weekDates.forEach(date => {
+               const dayIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+               const dayName = dayNames[dayIndex];
+               const dateStr = formatDate(date);
+               
+               shiftTypes.forEach(shiftType => {
+                   const shiftKey = getShiftKey(date, shiftType);
+                   const assignedShifts = shifts[shiftKey] || [];
+                   
+                   if (assignedShifts.length === 0) {
+                       csv += `${dayName},${dateStr},${shiftType},-,-\n`;
+                   } else {
+                       assignedShifts.forEach(shift => {
+                           csv += `${dayName},${dateStr},${shiftType},${shift.employee},${shift.note || '-'}\n`;
+                       });
+                   }
+               });
+           });
+           
+           // Download CSV
+           const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+           const link = document.createElement('a');
+           link.href = URL.createObjectURL(blob);
+           link.download = `schichtplan_kw${weekNumber}_${startDate.replace(/\./g, '-')}.csv`;
+           link.click();
+           
+           showSuccess('Schichtplan wurde exportiert.');
+       }
+
+       // Utility Functions
+       function escapeHtml(text) {
+           if (typeof text !== 'string') return '';
+           const div = document.createElement('div');
+           div.textContent = text;
+           return div.innerHTML;
+       }
+
+       function showMobileAddMenu() {
+           // Simple implementation - could be enhanced with a mobile-specific menu
+           const firstShift = shiftTypes[0];
+           const today = getWeekDates(currentWeekOffset)[0];
+           if (firstShift) {
+               openModal(today.toISOString(), firstShift);
+           }
+       }
+
+       // Event Listeners
+       document.addEventListener('DOMContentLoaded', () => {
+           // Initialize Firebase
+           initializeFirebase();
+           
+           // Auth form handlers
+           ['loginEmail', 'loginPassword'].forEach(id => {
+               document.getElementById(id).addEventListener('keypress', (e) => {
+                   if (e.key === 'Enter') login();
+               });
+           });
+           
+           ['registerEmail', 'registerPassword'].forEach(id => {
+               document.getElementById(id).addEventListener('keypress', (e) => {
+                   if (e.key === 'Enter') register();
+               });
+           });
+           
+           // Input handlers
+           document.getElementById('newEmployeeName').addEventListener('keypress', (e) => {
+               if (e.key === 'Enter') addEmployee();
+           });
+           
+           document.getElementById('newShiftTypeName').addEventListener('keypress', (e) => {
+               if (e.key === 'Enter') addShiftType();
+           });
+           
+           // Modal handlers
+           document.getElementById('shiftModal').addEventListener('click', (e) => {
+               if (e.target === document.getElementById('shiftModal')) {
+                   closeModal();
+               }
+           });
+           
+           // Keyboard shortcuts
+           document.addEventListener('keydown', (e) => {
+               // ESC to close modal
+               if (e.key === 'Escape' && document.getElementById('shiftModal').style.display === 'flex') {
+                   closeModal();
+               }
+               
+               // Ctrl+P to print
+               if (e.ctrlKey && e.key === 'p') {
+                   e.preventDefault();
+                   printSchedule();
+               }
+               
+               // Ctrl+E to export
+               if (e.ctrlKey && e.key === 'e') {
+                   e.preventDefault();
+                   exportSchedule();
+               }
+           });
+           
+           // Window resize handler
+           let resizeTimeout;
+           window.addEventListener('resize', () => {
+               clearTimeout(resizeTimeout);
+               resizeTimeout = setTimeout(() => {
+                   renderSchedule();
+               }, 250);
+           });
+       });
+
+       // Offline support
+       if ('serviceWorker' in navigator) {
+           navigator.serviceWorker.register('/sw.js').catch(err => {
+               console.log('Service Worker registration failed:', err);
+           });
+       }
+   </script>
 </body>
 </html>

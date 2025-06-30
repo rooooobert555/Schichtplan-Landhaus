@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landhaus Fillert - Schichtplan</title>
     <style>
+        /* ... (Dein gesamtes CSS bleibt wie gehabt, kann übernommen werden) ... */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; display: flex; align-items: center; justify-content: center; }
         .auth-container { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
@@ -168,6 +169,7 @@
         const dbRef = database.ref('/');
         const scheduleRef = dbRef.child('scheduleFinal');
 
+        // Mitarbeiter als Objekte mit active-Status
         let employees = [], shifts = {}, shiftTypes = [], currentWeekOffset = 0, currentModalSlot = null, isAdmin = false;
         const dayNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
         
@@ -259,25 +261,64 @@
         function addEmployee() {
             const nameInput = document.getElementById('newEmployeeName');
             const name = nameInput.value.trim();
-            if (name && !employees.includes(name)) {
-                scheduleRef.child('employees').set([...employees, name]);
+            if (name && !employees.some(e => e.name === name)) {
+                const newList = [...employees, {name, active: true}];
+                scheduleRef.child('employees').set(newList);
                 nameInput.value = '';
             }
         }
-        function removeEmployee(nameToRemove) { if (confirm(`Mitarbeiter "${nameToRemove}" entfernen?`)) { scheduleRef.child('employees').set(employees.filter(emp => emp !== nameToRemove)); } }
-        function addShiftType() { const nameInput = document.getElementById('newShiftTypeName'); const name = nameInput.value.trim(); if (name && !shiftTypes.includes(name)) { scheduleRef.child('shiftTypes').set([...shiftTypes, name]); nameInput.value = ''; } }
-        function removeShiftType(typeToRemove) { if (confirm(`Schicht-Typ "${typeToRemove}" entfernen?`)) { scheduleRef.child('shiftTypes').set(shiftTypes.filter(st => st !== typeToRemove)); } }
+        function removeEmployee(nameToRemove) { 
+            if (confirm(`Mitarbeiter "${nameToRemove}" entfernen?`)) {
+                const updated = employees.map(e => e.name === nameToRemove ? {...e, active: false} : e);
+                scheduleRef.child('employees').set(updated);
+                // Schichten des Mitarbeiters entfernen
+                Object.keys(shifts).forEach(shiftKey => {
+                    const updatedShifts = (shifts[shiftKey] || []).filter(s => s.employee !== nameToRemove);
+                    if (updatedShifts.length !== (shifts[shiftKey] || []).length) {
+                        if (updatedShifts.length > 0) {
+                            scheduleRef.child('shifts').child(shiftKey).set(updatedShifts);
+                        } else {
+                            scheduleRef.child('shifts').child(shiftKey).remove();
+                        }
+                    }
+                });
+            }
+        }
+        function addShiftType() { 
+            const nameInput = document.getElementById('newShiftTypeName'); 
+            const name = nameInput.value.trim(); 
+            if (name && !shiftTypes.includes(name)) { 
+                scheduleRef.child('shiftTypes').set([...shiftTypes, name]); 
+                nameInput.value = ''; 
+            } 
+        }
+        function removeShiftType(typeToRemove) { 
+            if (confirm(`Schicht-Typ "${typeToRemove}" entfernen?`)) { 
+                scheduleRef.child('shiftTypes').set(shiftTypes.filter(st => st !== typeToRemove)); 
+            } 
+        }
         
         function openModal(date, shiftType) { currentModalSlot = { date, shiftType }; document.getElementById('shiftModal').style.display = 'flex'; updateModalEmployeeSelect(); }
         function closeModal() { document.getElementById('shiftModal').style.display = 'none'; document.getElementById('modalNote').value = ''; currentModalSlot = null; }
         
-        function updateModalEmployeeSelect() { const select = document.getElementById('modalEmployee'); if (employees.length > 0) { select.innerHTML = employees.map(emp => `<option value="${emp}">${emp}</option>`).join(''); } else { select.innerHTML = '<option disabled>Bitte zuerst Mitarbeiter anlegen</option>'; } }
+        function updateModalEmployeeSelect() { 
+            const select = document.getElementById('modalEmployee'); 
+            const activeEmployees = employees.filter(e => e.active);
+            if (activeEmployees.length > 0) { 
+                select.innerHTML = activeEmployees.map(emp => `<option value="${emp.name}">${emp.name}</option>`).join(''); 
+            } else { 
+                select.innerHTML = '<option disabled>Bitte zuerst Mitarbeiter anlegen</option>'; 
+            } 
+        }
         
         function saveShift() {
             if (!currentModalSlot) return;
             const employee = document.getElementById('modalEmployee').value;
             const note = document.getElementById('modalNote').value.trim();
             if (!employee) { return alert('Bitte einen Mitarbeiter auswählen!'); }
+            if (!employees.some(e => e.name === employee && e.active)) {
+                return alert('Dieser Mitarbeiter ist nicht mehr aktiv.');
+            }
             const shiftKey = getShiftKey(new Date(currentModalSlot.date), currentModalSlot.shiftType);
             const newShift = { employee, note };
             const currentShifts = shifts[shiftKey] || [];
@@ -300,9 +341,23 @@
         }
 
         // --- RENDER FUNCTIONS ---
-        function updateWeekDisplay() { const weekDates = getWeekDates(currentWeekOffset); const startDate = formatDate(weekDates[0]); const endDate = formatDate(weekDates[6]); const weekNumber = getWeekNumber(weekDates[0]); document.getElementById('currentWeek').textContent = `KW ${weekNumber} (${startDate} - ${endDate})`; }
-        function updateEmployeeList(isAdmin) { const container = document.getElementById('employeeList'); container.innerHTML = employees.map(emp => `<div class="tag">${emp}${isAdmin ? `<button class="remove-tag" onclick="removeEmployee('${emp}')">×</button>` : ''}</div>`).join(''); }
-        function updateShiftTypeList(isAdmin) { const container = document.getElementById('shiftTypeList'); container.innerHTML = shiftTypes.map(st => `<div class="tag">${st}${isAdmin ? `<button class="remove-tag" onclick="removeShiftType('${st}')">×</button>` : ''}</div>`).join(''); }
+        function updateWeekDisplay() { 
+            const weekDates = getWeekDates(currentWeekOffset); 
+            const startDate = formatDate(weekDates[0]); 
+            const endDate = formatDate(weekDates[6]); 
+            const weekNumber = getWeekNumber(weekDates[0]); 
+            document.getElementById('currentWeek').textContent = `KW ${weekNumber} (${startDate} - ${endDate})`; 
+        }
+        function updateEmployeeList(isAdmin) { 
+            const container = document.getElementById('employeeList'); 
+            container.innerHTML = employees.filter(e => e.active).map(emp => 
+                `<div class="tag">${emp.name}${isAdmin ? `<button class="remove-tag" onclick="removeEmployee('${emp.name}')">×</button>` : ''}</div>` 
+            ).join(''); 
+        }
+        function updateShiftTypeList(isAdmin) { 
+            const container = document.getElementById('shiftTypeList'); 
+            container.innerHTML = shiftTypes.map(st => `<div class="tag">${st}${isAdmin ? `<button class="remove-tag" onclick="removeShiftType('${st}')">×</button>` : ''}</div>`).join(''); 
+        }
         
         function renderSchedule(isAdmin) {
             const grid = document.getElementById('scheduleGrid');
